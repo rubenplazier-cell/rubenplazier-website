@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ruben Plazier — Pianist</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root{
+    --paper:#f8f6f0;
+    --black:#0d0d0d;
+    --red:#e3392b;
+    --blue:#1d3ea8;
+    --yellow:#f2c230;
+    --muted:#6b6864;
+    --line: rgba(13,13,13,0.14);
+    --rule: rgba(13,13,13,0.14);
+    --onphoto:#f5f2ea;
+  }
+  :root[data-theme="dark"]{
+    --paper:#0e0e0d;
+    --black:#f2efe6;
+    --muted:#9c988f;
+    --line: rgba(242,239,230,0.14);
+    --rule: rgba(242,239,230,0.14);
+  }
+  body{ transition: background-color .5s ease, color .5s ease; }
+
+  .lights-overlay{
+    position:fixed; inset:0; background:#000;
+    opacity:0; pointer-events:none; z-index:300;
+    transition: opacity .3s ease;
+  }
+  .lights-overlay.active{ opacity:1; }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper);
+    color:var(--black);
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:400;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--black); color:var(--paper);}
+  a{color:inherit; text-decoration:none;}
+  .display{ font-family:'Archivo Black', sans-serif; line-height:0.95; }
+  .mono{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+  }
+
+  /* ---------- Photo placeholder frame ---------- */
+  .ph{
+    position:relative;
+    overflow:hidden;
+    background:
+      repeating-linear-gradient(135deg, rgba(13,13,13,0.05) 0 2px, transparent 2px 14px),
+      linear-gradient(150deg, var(--tone1, #2b2b32) 0%, var(--tone2, #0d0d0d) 100%);
+    display:flex;
+    align-items:flex-end;
+  }
+  .ph img{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    object-fit:cover;
+    display:block;
+    z-index:0;
+  }
+  .ph::before{
+    content:'';
+    position:absolute; left:0; right:0; bottom:0; height:55%;
+    background:linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+    z-index:0; pointer-events:none;
+  }
+  .ph .ph-tag{
+    position:relative; z-index:1;
+    padding:16px 18px;
+    color:var(--onphoto);
+    font-size:10px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    display:flex; align-items:center; gap:8px;
+    opacity:0.85;
+  }
+  .ph .ph-tag::before{
+    content:'';
+    width:7px; height:7px;
+    border:1.5px solid var(--onphoto);
+    border-radius:50%;
+  }
+  .ph.tone-red{ --tone1:#e3392b; --tone2:#5c140d; }
+  .ph.tone-blue{ --tone1:#1d3ea8; --tone2:#0b1c4a; }
+  .ph.tone-yellow{ --tone1:#f2c230; --tone2:#7a5f0a; }
+  .ph.tone-ink{ --tone1:#3a383f; --tone2:#0d0d0d; }
+
+  .play-btn{
+    position:absolute; top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    width:76px; height:76px;
+    border-radius:50%;
+    border:2px solid var(--onphoto);
+    display:flex; align-items:center; justify-content:center;
+    z-index:1;
+    transition: transform .3s ease, background .3s ease;
+  }
+  .play-btn::after{
+    content:'';
+    width:0; height:0;
+    border-top:11px solid transparent;
+    border-bottom:11px solid transparent;
+    border-left:18px solid var(--onphoto);
+    margin-left:4px;
+  }
+  .ph:hover .play-btn{ transform:translate(-50%,-50%) scale(1.1); background:rgba(255,255,255,0.12); }
+
+  /* ---------- Agenda ---------- */
+  .agenda{ padding:0 5vw 130px; border-top:3px solid var(--black); }
+  .agenda-head{
+    display:flex; justify-content:space-between; align-items:flex-end;
+    padding:50px 0 30px; flex-wrap:wrap; gap:10px;
+  }
+  .agenda-head h2{ font-size:clamp(30px, 4vw, 50px); }
+  .agenda-list{ border-top:1px solid var(--line); }
+  .agenda-row{
+    display:grid;
+    grid-template-columns:120px 1fr auto auto;
+    align-items:center;
+    gap:24px;
+    padding:26px 0;
+    border-bottom:1px solid var(--line);
+  }
+  @media (max-width:700px){ .agenda-row{ grid-template-columns:90px 1fr; row-gap:8px; } .agenda-row .venue, .agenda-row .cta{ grid-column:2; } }
+  .agenda-row .date{ font-family:'Archivo Black', sans-serif; font-size:16px; }
+  .agenda-row .date .d{ display:block; font-size:26px; }
+  .agenda-row .program{ font-size:15px; }
+  .agenda-row .venue{ color:var(--muted); font-size:13.5px; }
+  .agenda-row .cta{
+    border:2px solid var(--black); padding:8px 16px; font-size:11px;
+    letter-spacing:0.1em; text-transform:uppercase; white-space:nowrap;
+    transition: background .2s ease, color .2s ease;
+  }
+  .agenda-row .cta:hover{ background:var(--black); color:var(--paper); }
+  .agenda-empty{
+    padding:40px 0;
+    color:var(--muted);
+    font-size:13px;
+    letter-spacing:0.04em;
+    border-bottom:1px solid var(--line);
+  }
+  .agenda-foot{ margin-top:24px; }
+  .agenda-toggle{
+    background:none; border:none; padding:0;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--black);
+    border-bottom:1px solid var(--black); padding-bottom:2px;
+    cursor:pointer;
+  }
+  .agenda-toggle:hover{ opacity:0.7; }
+
+  /* ---------- Press / kit ---------- */
+  .press{ padding:0 5vw 140px; border-top:3px solid var(--black); }
+  .press-head{ padding:50px 0 40px; }
+  .press-head h2{ font-size:clamp(30px, 4vw, 50px); }
+  .quotes{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:40px;
+    margin-bottom:70px;
+  }
+  @media (max-width:760px){ .quotes{ grid-template-columns:1fr; } }
+  .quote{ border-left:3px solid var(--red); padding-left:24px; }
+  .quote p{ font-family:'Archivo Black', sans-serif; font-size:19px; line-height:1.4; margin-bottom:14px; }
+  .quote span{ color:var(--muted); font-size:12px; }
+  .kit-row{
+    display:flex; gap:20px; flex-wrap:wrap;
+    border-top:1px solid var(--line); padding-top:40px;
+  }
+  .kit-card{
+    flex:1 1 240px;
+    border:2px solid var(--black);
+    padding:26px;
+    transition: background .2s ease, color .2s ease;
+  }
+  .kit-card:hover{ background:var(--black); color:var(--paper); }
+  .kit-card .l{ font-size:11px; opacity:0.7; margin-bottom:10px; }
+  .kit-card .t{ font-family:'Archivo Black', sans-serif; font-size:18px; margin-bottom:6px; }
+  .kit-card .d{ font-size:13px; opacity:0.75; }
+
+  /* ---------- Nav ---------- */
+  nav{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:26px 5vw;
+    border-bottom:3px solid var(--black);
+    position:relative; z-index:5; background:var(--paper);
+  }
+  .brand{ font-family:'Archivo Black', sans-serif; font-size:16px; }
+  .nav-links{ display:flex; gap:30px; }
+  .nav-links a{ opacity:0.7; transition:opacity .2s; }
+  .nav-links a:hover{ opacity:1; color:var(--red); }
+  @media (max-width:720px){ .nav-links{ display:none; } }
+
+  .nav-cta{
+    border:2px solid var(--black); padding:8px 16px;
+    font-size:10.5px; letter-spacing:0.12em; text-transform:uppercase;
+    transition: background .2s ease, color .2s ease;
+  }
+  .nav-cta:hover{ background:var(--black); color:var(--paper); }
+
+  .lang-switch{ display:flex; gap:0; }
+  .lang-switch button{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px; letter-spacing:0.08em;
+    background:none; border:1px solid var(--rule, rgba(13,13,13,0.3));
+    border-right:none;
+    padding:7px 10px;
+    cursor:pointer;
+    color:var(--black); opacity:0.5;
+    transition: opacity .2s ease, background .2s ease, color .2s ease;
+  }
+  .lang-switch button:last-child{ border-right:1px solid var(--rule, rgba(13,13,13,0.3)); }
+  .lang-switch button.active{ opacity:1; background:var(--black); color:var(--paper); }
+  .lang-switch button:hover{ opacity:1; }
+  @media (max-width:900px){ .lang-switch{ display:none; } }
+
+  .theme-toggle{
+    width:34px; height:34px;
+    border:1px solid var(--rule, rgba(13,13,13,0.3));
+    background:none;
+    color:var(--black);
+    font-size:15px;
+    line-height:1;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition: background .2s ease, color .2s ease, transform .2s ease;
+  }
+  .theme-toggle:hover{ background:var(--black); color:var(--paper); transform:rotate(-12deg); }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    display:grid;
+    grid-template-columns:1.1fr 0.9fr;
+    min-height:88vh;
+  }
+  @media (max-width:900px){ .hero{ grid-template-columns:1fr; min-height:auto; } }
+  .hero-copy{
+    padding:70px 5vw;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+  }
+  .hero-copy .kicker{ margin-bottom:22px; color:var(--red); }
+  .hero-title{
+    font-size:clamp(46px, 7vw, 92px);
+    letter-spacing:-0.01em;
+  }
+  .hero-copy p{
+    margin-top:26px;
+    max-width:440px;
+    font-size:15.5px;
+    line-height:1.8;
+    color:var(--muted);
+  }
+  .hero-photo{ min-height:520px; }
+  @media (max-width:900px){ .hero-photo{ min-height:380px; } }
+
+  /* ---------- Gallery ---------- */
+  .gallery{
+    padding:0 5vw 0;
+    border-top:3px solid var(--black);
+  }
+  .gallery-head{
+    display:flex; justify-content:space-between; align-items:flex-end;
+    padding:50px 0 30px;
+    flex-wrap:wrap; gap:10px;
+  }
+  .gallery-head h2{ font-size:clamp(30px, 4vw, 50px); }
+  .grid{
+    columns: 3 260px;
+    column-gap: 18px;
+    padding-bottom:100px;
+  }
+  @media (max-width:760px){
+    .grid{ columns: 2 160px; column-gap:12px; }
+  }
+  .gallery-item{
+    position:relative;
+    break-inside: avoid;
+    margin-bottom: 18px;
+    overflow:hidden;
+    cursor:pointer;
+    background:var(--line);
+  }
+  @media (max-width:760px){ .gallery-item{ margin-bottom:12px; } }
+  .gallery-item img{
+    width:100%;
+    display:block;
+    transition: transform .6s cubic-bezier(.16,.84,.44,1);
+  }
+  .gallery-item:hover img{ transform: scale(1.045); }
+  .gallery-credit{
+    position:absolute; left:0; right:0; bottom:0;
+    padding:14px 14px 10px;
+    background:linear-gradient(to top, rgba(13,13,13,0.65), transparent);
+    color:var(--onphoto);
+    font-size:10px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    opacity:0.9;
+    pointer-events:none;
+  }
+
+  /* ---------- Lightbox ---------- */
+  .lightbox{
+    position:fixed; inset:0;
+    background:rgba(9,9,9,0.95);
+    display:none;
+    align-items:center; justify-content:center;
+    z-index:400;
+    padding:60px;
+  }
+  .lightbox.active{ display:flex; }
+  .lightbox-img{
+    max-width:88vw; max-height:86vh;
+    object-fit:contain;
+    box-shadow:0 40px 100px rgba(0,0,0,0.55);
+  }
+  .lightbox-btn{
+    position:absolute;
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(245,242,234,0.35);
+    color:var(--onphoto);
+    width:46px; height:46px;
+    border-radius:50%;
+    cursor:pointer;
+    font-size:18px;
+    line-height:1;
+    display:flex; align-items:center; justify-content:center;
+    transition: background .2s ease, border-color .2s ease, transform .2s ease;
+  }
+  .lightbox-btn:hover{ background:rgba(255,255,255,0.14); border-color:var(--onphoto); }
+  .lightbox-close{ top:22px; right:22px; }
+  .lightbox-prev{ left:22px; top:50%; transform:translateY(-50%); }
+  .lightbox-prev:hover{ transform:translateY(-50%) scale(1.06); }
+  .lightbox-next{ right:22px; top:50%; transform:translateY(-50%); }
+  .lightbox-next:hover{ transform:translateY(-50%) scale(1.06); }
+  @media (max-width:700px){
+    .lightbox{ padding:20px; }
+    .lightbox-btn{ width:38px; height:38px; font-size:15px; }
+    .lightbox-prev{ left:10px; }
+    .lightbox-next{ right:10px; }
+    .lightbox-close{ top:12px; right:12px; }
+  }
+
+  /* ---------- Studio (piano) ---------- */
+  .studio{
+    padding:70px 5vw 110px;
+    border-top:3px solid var(--black);
+  }
+  .studio-label{
+    display:flex; justify-content:space-between; align-items:baseline;
+    margin-bottom:16px; flex-wrap:wrap; gap:10px;
+  }
+  .studio-right{ display:flex; align-items:center; gap:16px; }
+  .mute-btn{
+    background:none;
+    border:1px solid var(--rule, rgba(13,13,13,0.3));
+    padding:6px 12px;
+    cursor:pointer;
+    color:var(--black);
+    opacity:0.7;
+    transition: opacity .2s ease, background .2s ease, color .2s ease;
+  }
+  .mute-btn:hover{ opacity:1; }
+  .mute-btn.unmuted{ background:var(--black); color:var(--paper); opacity:1; }
+  .canvas{
+    position:relative; width:100%; height:220px;
+    background:var(--paper); border:3px solid var(--black); overflow:hidden;
+  }
+  .canvas .mark{ position:absolute; transform:translate(-50%,-50%) scale(0); animation: pop .4s cubic-bezier(.2,.9,.3,1.4) forwards; }
+  @keyframes pop{ to{ transform:translate(-50%,-50%) scale(1); } }
+  .canvas .hint{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    color:var(--muted); font-size:13px; pointer-events:none; transition:opacity .4s ease;
+  }
+  .keys{ display:flex; margin-top:-3px; border:3px solid var(--black); border-top:none; height:64px; }
+  .key{ flex:1; border-right:3px solid var(--black); cursor:pointer; transition: background .1s ease, transform .06s ease; background:var(--paper); }
+  .key:last-child{ border-right:none; }
+  .key:nth-child(3n+1).active{ background:var(--red); }
+  .key:nth-child(3n+2).active{ background:var(--blue); }
+  .key:nth-child(3n).active{ background:var(--yellow); }
+  .key.active{ transform:translateY(4px); }
+
+  /* ---------- About ---------- */
+  .about{
+    padding:0 5vw 130px;
+    border-top:3px solid var(--black);
+    display:grid;
+    grid-template-columns:0.85fr 1.15fr;
+    gap:0;
+  }
+  @media (max-width:900px){ .about{ grid-template-columns:1fr; } }
+  .about-photo{ min-height:520px; }
+  @media (max-width:900px){ .about-photo{ min-height:380px; } }
+  .about-copy{ padding:70px 0 0 60px; }
+  @media (max-width:900px){ .about-copy{ padding:50px 0 0; } }
+  .about-copy h2{
+    font-size:clamp(30px, 4vw, 50px);
+    margin-bottom:30px;
+  }
+  .pull{
+    font-family:'Archivo Black', sans-serif;
+    font-size:20px;
+    line-height:1.4;
+    background:var(--yellow);
+    padding:26px;
+    display:inline-block;
+    margin-bottom:28px;
+    max-width:46ch;
+  }
+  .about-copy p{
+    font-size:15.5px; line-height:1.85; color:var(--muted);
+    margin-bottom:20px; max-width:56ch;
+  }
+  .about-tags{ display:flex; gap:12px; flex-wrap:wrap; margin-top:22px; }
+  .about-tags span{ border:2px solid var(--black); padding:8px 14px; font-size:11px; }
+
+  .bio-toggle{ display:flex; gap:0; margin-bottom:26px; }
+  .bio-tab{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase;
+    background:none; border:2px solid var(--black); padding:9px 16px;
+    cursor:pointer; color:var(--black); opacity:0.55;
+  }
+  .bio-tab + .bio-tab{ border-left:none; }
+  .bio-tab.active{ background:var(--black); color:var(--paper); opacity:1; }
+
+  .mentor{
+    grid-column:1 / -1;
+    margin-top:70px;
+    border-top:1px solid var(--rule);
+    padding-top:50px;
+  }
+  .mentor-grid{
+    display:grid;
+    grid-template-columns:1.1fr 0.9fr;
+    gap:50px;
+    align-items:start;
+  }
+  @media (max-width:900px){ .mentor-grid{ grid-template-columns:1fr; } }
+  .mentor-inner{ max-width:70ch; }
+  .mentor h3{
+    font-size:clamp(24px, 3vw, 34px);
+    font-style:italic;
+    margin:12px 0 20px;
+  }
+  .mentor p{
+    font-size:15px; line-height:1.9; color:var(--muted); font-weight:300;
+    max-width:66ch;
+  }
+  .mentor-video{
+    position:relative;
+    border:1px solid var(--rule);
+    background:#0d0d0d;
+  }
+  .mentor-video video{
+    width:100%; display:block;
+    aspect-ratio:16/9;
+    object-fit:cover;
+    background:#000;
+  }
+  .mentor-caption{
+    display:block;
+    padding:10px 2px 0;
+    color:var(--muted);
+    font-size:10px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+  }
+  .mentor-photos{
+    display:flex;
+    flex-wrap:wrap;
+    gap:26px 22px;
+    margin-top:34px;
+    padding:6px 0 10px;
+  }
+  .polaroid{
+    background:#f5f2ea;
+    padding:9px 9px 26px;
+    box-shadow:0 12px 26px rgba(13,13,13,0.2);
+    cursor:default;
+    transition: transform .35s cubic-bezier(.2,.8,.3,1.3), box-shadow .35s ease;
+  }
+  .polaroid img{
+    width:132px; height:132px;
+    object-fit:cover; display:block;
+  }
+  .polaroid .cap{
+    display:block;
+    margin-top:9px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:9px;
+    letter-spacing:0.09em;
+    text-transform:uppercase;
+    color:#6b6864;
+    text-align:center;
+  }
+  .polaroid.p1{ transform:rotate(-7deg) translateY(8px); }
+  .polaroid.p2{ transform:rotate(4deg) translateY(-6px); }
+  .polaroid.p3{ transform:rotate(-3deg) translateY(14px); }
+  .polaroid:hover{
+    transform:rotate(0deg) translateY(-8px) scale(1.06);
+    box-shadow:0 24px 46px rgba(13,13,13,0.32);
+    z-index:5;
+  }
+  @media (max-width:560px){
+    .mentor-photos{ gap:20px 16px; }
+    .polaroid img{ width:104px; height:104px; }
+  }
+
+  /* ---------- Performances ---------- */
+  .performances{ padding:0 5vw 140px; border-top:3px solid var(--black); }
+  .performances h2{
+    font-size:clamp(30px, 4vw, 50px);
+    margin:60px 0 40px;
+  }
+  .perf-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:0;
+    border-top:1px solid var(--line);
+  }
+  .perf-row:last-child{ border-bottom:1px solid var(--line); }
+  .perf-row:nth-child(even){ direction:rtl; }
+  .perf-row:nth-child(even) > *{ direction:ltr; }
+  @media (max-width:800px){ .perf-row{ grid-template-columns:1fr; } .perf-row:nth-child(even){ direction:ltr; } }
+  .perf-photo{ min-height:260px; }
+  .perf-copy{ padding:44px 50px; display:flex; flex-direction:column; justify-content:center; }
+  .perf-copy .tag{ color:var(--red); margin-bottom:14px; display:block; }
+  .perf-copy h3{ font-family:'Archivo Black', sans-serif; font-size:26px; margin-bottom:14px; }
+  .perf-copy p{ font-size:14.5px; line-height:1.8; color:var(--muted); max-width:48ch; }
+  .perf-link{
+    display:inline-block;
+    margin-top:14px;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--red);
+    border-bottom:1px solid var(--red);
+    padding-bottom:2px;
+    transition: opacity .2s ease;
+  }
+  .perf-link:hover{ opacity:0.65; }
+
+  /* ---------- Footer ---------- */
+  footer{
+    background:var(--black);
+    color:var(--paper);
+    padding:110px 5vw 40px;
+  }
+  footer h2{
+    font-size:clamp(34px, 6vw, 74px);
+    max-width:760px;
+    margin-bottom:60px;
+  }
+  footer h2 .it{ color:var(--yellow); }
+  .foot-meta div{ margin-bottom:14px; }
+  .foot-meta .l{ font-size:10px; opacity:0.6; margin-bottom:4px; }
+  .foot-meta .v{ font-size:16px; }
+  .foot-meta a.v:hover{ color:var(--red); }
+  .copyright{
+    margin-top:80px; padding-top:20px; border-top:1px solid rgba(248,246,240,0.25);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+    font-size:10px; opacity:0.65;
+  }
+
+  /* ---------- Animations ---------- */
+  .progress-bar{
+    position:fixed; top:0; left:0; height:3px; width:0%;
+    background:var(--red); z-index:100;
+    transition: width .08s linear;
+  }
+
+  .cursor-dot{
+    position:fixed; top:0; left:0;
+    width:22px; height:22px; border-radius:50%;
+    background:var(--red);
+    mix-blend-mode:difference;
+    pointer-events:none; z-index:150;
+    transform:translate(-50%,-50%) scale(1);
+    transition: transform .18s cubic-bezier(.2,.8,.3,1.3), opacity .3s ease;
+    opacity:0;
+  }
+  .cursor-dot.show{ opacity:1; }
+  .cursor-dot.big{ transform:translate(-50%,-50%) scale(2.4); }
+  @media (hover:none){ .cursor-dot{ display:none; } }
+
+  .reveal{
+    opacity:0;
+    transform:translateY(46px);
+    transition: opacity .8s cubic-bezier(.2,.8,.2,1), transform .8s cubic-bezier(.2,.8,.2,1);
+  }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  .ph.reveal{
+    opacity:1;
+    transform:none;
+    clip-path: inset(0 0 100% 0);
+    transition: clip-path 1s cubic-bezier(.16,.84,.44,1);
+    will-change: transform;
+  }
+  .ph.reveal.in{ clip-path: inset(0 0 0% 0); }
+
+  .letters{ display:inline-flex; overflow:hidden; }
+  .letters span{
+    display:inline-block;
+    transform:translateY(105%);
+    opacity:0;
+    animation: letter-up .7s cubic-bezier(.2,.8,.2,1) forwards;
+  }
+  @keyframes letter-up{
+    to{ transform:translateY(0); opacity:1; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .reveal, .ph.reveal{ opacity:1 !important; transform:none !important; clip-path:none !important; transition:none !important; }
+    .letters span{ animation:none !important; transform:none !important; opacity:1 !important; }
+    .cursor-dot{ display:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="lights-overlay" id="lightsOverlay"></div>
+
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <button class="lightbox-btn lightbox-close" id="lightboxClose" aria-label="Close" type="button">✕</button>
+  <button class="lightbox-btn lightbox-prev" id="lightboxPrev" aria-label="Previous" type="button">←</button>
+  <img class="lightbox-img" id="lightboxImg" src="" alt="">
+  <button class="lightbox-btn lightbox-next" id="lightboxNext" aria-label="Next" type="button">→</button>
+</div>
+
+<nav>
+  <div class="brand">RUBEN PLAZIER</div>
+  <div class="nav-links mono">
+    <a href="#gallery" data-i18n="nav_gallery">Gallery</a>
+    <a href="#about" data-i18n="nav_about">About</a>
+    <a href="#performances" data-i18n="nav_performances">Performances</a>
+    <a href="#agenda" data-i18n="nav_agenda">Agenda</a>
+    <a href="#press" data-i18n="nav_press">Press</a>
+    <a href="#contact" data-i18n="nav_contact">Contact</a>
+  </div>
+  <div class="lang-switch mono" id="langSwitch">
+    <button type="button" data-lang="nl">NL</button>
+    <button type="button" data-lang="en" class="active">EN</button>
+    <button type="button" data-lang="fr">FR</button>
+    <button type="button" data-lang="de">DE</button>
+  </div>
+  <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle lights" title="Lights">☾</button>
+  <a href="#contact" class="nav-cta mono" data-i18n="nav_cta">Contact now</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-copy">
+    <span class="kicker mono" data-i18n="hero_kicker">Pianist — Antwerp / Paris</span>
+    <h1 class="hero-title display" id="heroTitle"></h1>
+    <p class="reveal" id="heroP" data-i18n="hero_p">Born in Delft, musically formed in Paris in the tradition of the Russian piano school. Solo recitals, a duo with violinist Karen Su, and the concert series Experience Klassiek.</p>
+  </div>
+  <div class="ph hero-photo tone-ink reveal" style="background-image:url('assets/ruben-portrait.jpg');background-size:cover;background-position:center 22%;">
+    <span class="ph-tag">Ruben Plazier</span>
+  </div>
+</section>
+
+<section class="studio">
+  <div class="studio-label reveal">
+    <span class="mono" data-i18n="studio_label">Composed live — or play it yourself</span>
+    <div class="studio-right">
+      <span class="mono" style="opacity:0.6;" data-i18n="studio_sub">Composition No. 01</span>
+      <button class="mute-btn mono" id="muteBtn" type="button" data-i18n="mute_off">Sound off</button>
+    </div>
+  </div>
+  <div class="canvas reveal" id="canvas">
+    <div class="hint mono" id="hint" data-i18n="studio_hint">click the keys below</div>
+  </div>
+  <div class="keys reveal" id="keys"></div>
+</section>
+
+<section class="gallery" id="gallery">
+  <div class="gallery-head reveal">
+    <span class="mono" style="color:var(--red);" data-i18n="gallery_label">Gallery</span>
+    <h2 class="display" data-i18n="gallery_title">On stage, off stage</h2>
+  </div>
+  <div class="grid" id="galleryGrid">
+    <div class="gallery-item reveal">
+      <img src="https://images.squarespace-cdn.com/content/v1/6522b651e0f4c622871fa2b9/030be732-5e1d-4b43-aea4-5533f979fcfd/081224-0308+Large.jpeg" alt="Recital" loading="lazy">
+    </div>
+    <div class="gallery-item reveal">
+      <img src="https://images.squarespace-cdn.com/content/v1/6522b651e0f4c622871fa2b9/33d515df-af0a-4321-a4a1-ed98e887afce/081224-0459+Large.jpeg" alt="Solo" loading="lazy">
+    </div>
+    <div class="gallery-item reveal">
+      <img src="https://images.squarespace-cdn.com/content/v1/6522b651e0f4c622871fa2b9/68b707cb-1189-4055-9111-80fa345ad337/20250207_KarenSu_RubenPlazier_BjornComhaire_20_of_67.jpg" alt="Duo — Karen Su" loading="lazy">
+      <span class="gallery-credit mono" data-i18n="photo_credit">Foto — Björn Comhaire</span>
+    </div>
+    <div class="gallery-item reveal">
+      <img src="https://images.squarespace-cdn.com/content/v1/6522b651e0f4c622871fa2b9/bb059d72-0563-417e-a98e-bc4028bb05ea/081224-0475+Large.jpeg" alt="Experience Klassiek" loading="lazy">
+    </div>
+    <div class="gallery-item reveal">
+      <img src="https://images.squarespace-cdn.com/content/v1/6522b651e0f4c622871fa2b9/f1161429-6914-41bf-b2d0-4a2042e262d4/IMG_3876.jpeg" alt="Studio" loading="lazy">
+    </div>
+    <div class="gallery-item reveal">
+      <img src="assets/ek-hall-wide.jpg" alt="Experience Klassiek, concert hall" loading="lazy">
+      <span class="gallery-credit mono">Foto — Foppe Schut</span>
+    </div>
+    <div class="gallery-item reveal">
+      <img src="assets/ek-ovation.jpg" alt="Experience Klassiek, standing ovation" loading="lazy">
+      <span class="gallery-credit mono">Foto — Foppe Schut</span>
+    </div>
+  </div>
+</section>
+
+<section class="agenda" id="agenda">
+  <div class="agenda-head reveal">
+    <span class="mono" style="color:var(--red);" data-i18n="agenda_label">Agenda</span>
+    <h2 class="display" data-i18n="agenda_title">Upcoming</h2>
+  </div>
+  <div class="agenda-list" id="agendaList">
+    <div class="agenda-row reveal" data-date="2026-10-04">
+      <div class="date"></div>
+      <div class="program">Recital — met Karen Su (16:00)</div>
+      <div class="venue">Middelburg</div>
+      <a href="#contact" class="cta mono" data-i18n="agenda_tickets">Tickets</a>
+    </div>
+    <div class="agenda-row reveal" data-date="2026-11-08">
+      <div class="date"></div>
+      <div class="program">Rhapsody in Blue — met Mechels Harmonie Orkest</div>
+      <div class="venue">Details volgen</div>
+      <a href="#contact" class="cta mono" data-i18n="agenda_tickets">Tickets</a>
+    </div>
+    <div class="agenda-row reveal" data-date="2026-11-12">
+      <div class="date"></div>
+      <div class="program">Recital — met Karen Su</div>
+      <div class="venue">Muziekgebouw Eindhoven</div>
+      <a href="#contact" class="cta mono" data-i18n="agenda_tickets">Tickets</a>
+    </div>
+    <div class="agenda-row reveal" data-date="2026-11-25">
+      <div class="date"></div>
+      <div class="program">Recital</div>
+      <div class="venue">Schiedam</div>
+      <a href="#contact" class="cta mono" data-i18n="agenda_tickets">Tickets</a>
+    </div>
+    <div class="agenda-row reveal" data-date="2027-02-19">
+      <div class="date"></div>
+      <div class="program">Trio — met Luc Tooten &amp; Karen Su</div>
+      <div class="venue">Zoersel</div>
+      <a href="#contact" class="cta mono" data-i18n="agenda_tickets">Tickets</a>
+    </div>
+  </div>
+  <p class="agenda-empty mono" id="agendaEmpty" style="display:none;" data-i18n="agenda_empty">Geen aankomende concerten — kijk binnenkort terug.</p>
+  <div class="agenda-foot reveal mono"><button type="button" id="agendaToggle" class="agenda-toggle" data-i18n="agenda_foot">Volledige agenda →</button></div>
+</section>
+
+<section class="about" id="about">
+  <div class="ph about-photo reveal" style="background-image:url('https://images.squarespace-cdn.com/content/v1/6522b651e0f4c622871fa2b9/2c364772-392f-4ecc-b7eb-68b91e0af630/081224-0093+Large.jpeg');background-size:cover;background-position:center;"></div>
+  <div class="about-copy reveal">
+    <span class="mono" style="color:var(--red);" data-i18n="about_label">About</span>
+    <h2 class="display" style="margin-top:16px;" data-i18n="about_title">The approach</h2>
+    <div class="pull" data-i18n="about_quote">"I strive to tell a compelling story through both my words and music."</div>
+    <div class="bio-toggle mono" id="bioToggle">
+      <button class="bio-tab active" data-bio="short" type="button" data-i18n="bio_tab_short">Short bio</button>
+      <button class="bio-tab" data-bio="long" type="button" data-i18n="bio_tab_long">Long bio</button>
+    </div>
+    <div id="bioShort" data-i18n-html="bio_short">
+      <p>Ruben Plazier (Delft, 1998) is a classical pianist formed in the tradition of the Russian piano school. At fourteen he began at the Rotterdam Conservatory under Stéphane De May, who introduced him to French pianist Jean-Bernard Pommier — a meeting that would change his playing for good. After years of traveling between Rotterdam, Béziers and Paris, he was unanimously awarded his Diplôme Supérieur de Concertiste at the École Normale de Musique Alfred Cortot. As a soloist, he has performed concertos with orchestra and appeared in halls including the Concertgebouw Amsterdam and De Doelen Rotterdam, as well as in New York and Los Angeles. Beyond the stage, he curates the classical programming for De Doelen (2026/27 season) and Muziekgebouw Eindhoven, and performs as a duo with violinist Karen Su and as founder of the concert series Experience Klassiek.</p>
+    </div>
+    <div id="bioLong" style="display:none;" data-i18n-html="bio_long">
+      <p>Ruben Plazier was born in Delft in 1998 and began playing piano at six, on the instrument his parents kept at home. After his first lessons at the local music school in Dordrecht, a handful of lessons with Wibi Soerjadi at thirteen lit a spark that would set his course.</p>
+      <p>At fourteen, Ruben was admitted to the Rotterdam Conservatory, where he studied with the Belgian pianist Stéphane De May. Through De May, he met the French pianist Jean-Bernard Pommier — an encounter that would change everything. For three years, Ruben travelled to Béziers in the south of France to play for Pommier, while completing his Bachelor's degree with De May in Rotterdam.</p>
+      <p>When Pommier began teaching at the École Normale de Musique Alfred Cortot in Paris, Ruben started commuting weekly between Rotterdam and Paris. There, unanimously awarded by the jury each time, he earned his Diplôme Supérieur d'Enseignement, his Diplôme Supérieur d'Exécution, and in 2022, his Diplôme Supérieur de Concertiste. The close bond Ruben built with Pommier left a lasting mark on his playing: through him, the old Russian piano school was passed down, with its thinking on sound and phrasing.</p>
+      <p>As a soloist with orchestra, Ruben has performed concertos by composers including Rachmaninoff, Mendelssohn, Poulenc and Mozart. He has performed in halls including the Concertgebouw Amsterdam, De Doelen Rotterdam, TivoliVredenburg Utrecht, Muziekgebouw Eindhoven, Salle Cortot Paris, the Philharmonie Liège and the Rudolfinum in Prague, as well as in New York and Los Angeles. His awards include the international Festival d'Anniviers prize in Switzerland and first prize at the Archipel Music Competition, and he has taken masterclasses with, among others, Angela Hewitt, Frank Braley and Håkon Austbø.</p>
+      <p>Beyond performing, Ruben also works as a programmer: he curated the classical programming for De Doelen Rotterdam's 2026/27 season, and currently oversees the classical programming at Muziekgebouw Eindhoven.</p>
+      <p>Together with violinist Karen Su, he founded the concert series Experience Klassiek and its accompanying Academy, where he now guides the next generation of musicians — much as he himself was once guided.</p>
+    </div>
+    <div class="about-tags mono">
+      <span>Delft</span>
+      <span>Béziers</span>
+      <span>Paris</span>
+      <span data-i18n="tag_conservatory">Rotterdam Conservatory</span>
+      <span>De Doelen</span>
+      <span>Muziekgebouw Eindhoven</span>
+      <span>Duo — Karen Su</span>
+    </div>
+  </div>
+
+  <div class="mentor reveal">
+    <div class="mentor-grid">
+      <div class="mentor-inner">
+        <span class="mono" style="color:var(--red);" data-i18n="mentor_label">Mentor</span>
+        <h3 class="display">Jean-Bernard Pommier</h3>
+        <div data-i18n-html="mentor_body">
+          <p>Ruben met Jean-Bernard Pommier through his first teacher, Stéphane De May, at the Rotterdam Conservatory. What began as a few lessons in Béziers grew into one of the defining relationships of his musical life: years of travel, first to the south of France, later weekly to Paris, for lessons that stretched into long conversations over breakfast, dinner, and late into the night. Pommier demanded a willingness to start over, again and again, and gave in return something that reached far beyond technique: a way of listening, of thinking about sound, that he himself had inherited from generations of great pedagogues within the Russian piano school. That inheritance now sits at the core of how Ruben plays, and teaches.</p>
+        </div>
+      </div>
+      <div class="mentor-media">
+        <div class="mentor-video">
+          <video controls playsinline preload="metadata" poster="assets/pommier-lesson.jpg">
+            <source src="assets/pommier-adieux.mp4" type="video/mp4">
+          </video>
+          <span class="mentor-caption" data-i18n="mentor_video_caption">Beethoven, Les Adieux — with Pommier, 2021</span>
+        </div>
+        <div class="mentor-photos">
+          <div class="polaroid p1">
+            <img src="assets/pommier-lesson.jpg" alt="Lesson with Jean-Bernard Pommier">
+            <span class="cap" data-i18n="mentor_photo_cap1">Béziers, lesson</span>
+          </div>
+          <div class="polaroid p2">
+            <img src="assets/pommier-duo.jpg" alt="Performing alongside Jean-Bernard Pommier">
+            <span class="cap" data-i18n="mentor_photo_cap2">At the piano</span>
+          </div>
+          <div class="polaroid p3">
+            <img src="assets/pommier-lunch.jpg" alt="With Jean-Bernard Pommier">
+            <span class="cap" data-i18n="mentor_photo_cap3">Off duty</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="performances" id="performances">
+  <h2 class="display reveal" data-i18n="performances_title">Three ways to hear it</h2>
+  <div class="perf-row">
+    <div class="ph perf-photo reveal" style="background-image:url('https://images.squarespace-cdn.com/content/v1/6522b651e0f4c622871fa2b9/a0eb9c02-daf6-4ae9-b0e3-e52c44df40ee/081224-0166+Large.jpeg');background-size:cover;background-position:center;"></div>
+    <div class="perf-copy reveal">
+      <span class="tag mono" data-i18n="perf_tag_solo">Solo</span>
+      <h3 data-i18n="perf_title_solo">Recitals</h3>
+      <p data-i18n="perf_desc_solo">Full-length programmes centred on French repertoire and the Russian pianistic lineage — Debussy, Scriabin, and composers just outside the standard canon.</p>
+    </div>
+  </div>
+  <div class="perf-row">
+    <div class="ph perf-photo reveal" style="background-image:url('https://images.squarespace-cdn.com/content/v1/6522b651e0f4c622871fa2b9/4657ac5d-e572-4820-8734-8f50bc69a60a/20250207_KarenSu_RubenPlazier_BjornComhaire_52_of_67.jpg');background-size:cover;background-position:center;">
+      <span class="ph-tag" style="opacity:0.7;" data-i18n="photo_credit">Foto — Björn Comhaire</span>
+    </div>
+    <div class="perf-copy reveal">
+      <span class="tag mono" data-i18n="perf_tag_duo">Duo</span>
+      <h3 data-i18n="perf_title_duo">With Karen Su</h3>
+      <p data-i18n="perf_desc_duo">A working partnership built over years of shared repertoire, from sonata literature to newly paired programmes for smaller, more intimate halls.</p>
+    </div>
+  </div>
+  <div class="perf-row">
+    <div class="ph perf-photo reveal" style="background-image:url('assets/trio-photo.jpg');background-size:cover;background-position:center;"></div>
+    <div class="perf-copy reveal">
+      <span class="tag mono" data-i18n="perf_tag_trio">Trio</span>
+      <h3 data-i18n="perf_title_trio">With Karen Su &amp; Luc Tooten</h3>
+      <p data-i18n="perf_desc_trio">A trio programme built around Karen Su on violin and Luc Tooten on cello, pairing chamber repertoire with the same attention to line and story as the solo and duo work.</p>
+    </div>
+  </div>
+  <div class="perf-row">
+    <div class="ph perf-photo reveal" style="background-image:url('assets/mge-grote-zaal.jpg');background-size:cover;background-position:center;">
+      <span class="ph-tag" style="opacity:0.7;">Foto — Bram Saeys</span>
+    </div>
+    <div class="perf-copy reveal">
+      <span class="tag mono" data-i18n="perf_tag_mge">Programming</span>
+      <h3 data-i18n="perf_title_mge">Muziekgebouw Eindhoven</h3>
+      <p data-i18n="perf_desc_mge">Ruben curates the classical programming at Muziekgebouw Eindhoven.</p>
+      <a href="https://mge.nl/en/classical/" target="_blank" rel="noopener" class="perf-link mono" data-i18n="perf_link_mge">View the classical programme →</a>
+    </div>
+  </div>
+</section>
+
+<section class="press" id="press">
+  <div class="press-head reveal">
+    <span class="mono" style="color:var(--red);" data-i18n="press_label">Press &amp; Kit</span>
+    <h2 class="display" data-i18n="press_title">In their words</h2>
+  </div>
+  <div class="quotes">
+    <div class="quote reveal">
+      <p data-i18n="quote1">"Vul hier een recensiecitaat in."</p>
+      <span data-i18n="quote_source">— Publicatie, jaar</span>
+    </div>
+    <div class="quote reveal">
+      <p data-i18n="quote2">"Vul hier een tweede recensiecitaat in."</p>
+      <span data-i18n="quote_source">— Publicatie, jaar</span>
+    </div>
+  </div>
+  <div class="kit-row">
+    <a href="#" class="kit-card reveal">
+      <div class="l mono" data-i18n="kit_download">Download</div>
+      <div class="t" data-i18n="kit_repertoire_t">Repertoire</div>
+      <div class="d" data-i18n="kit_repertoire_d">Volledige lijst, PDF</div>
+    </a>
+    <a href="assets/ruben-plazier-press-kit-hq.zip" download class="kit-card reveal">
+      <div class="l mono" data-i18n="kit_download">Download</div>
+      <div class="t" data-i18n="kit_presskit_t">Press kit</div>
+      <div class="d" data-i18n="kit_presskit_d">Hoge-resolutie foto's</div>
+    </a>
+    <a href="#" class="kit-card reveal">
+      <div class="l mono" data-i18n="kit_download">Download</div>
+      <div class="t">Bio (NL/EN)</div>
+      <div class="d" data-i18n="kit_bio_d">Kort + lang, .docx</div>
+    </a>
+  </div>
+</section>
+
+<footer id="contact">
+  <span class="mono" style="opacity:0.65;" data-i18n="footer_label">Get in touch</span>
+  <h2 class="display reveal" style="margin-top:20px;" data-i18n-html="footer_heading">Every concert starts with a <span class="it">conversation</span>. Let's have it.</h2>
+  <div class="foot-meta reveal">
+    <div><div class="l mono" data-i18n="foot_location">Location</div><div class="v">Netherlands / Antwerp</div></div>
+    <div><div class="l mono" data-i18n="foot_contact">Contact</div><a class="v" href="https://www.rubenplazier.com/contact" target="_blank" rel="noopener">rubenplazier.com/contact</a></div>
+    <div><div class="l mono">Instagram</div><a class="v" href="https://www.instagram.com/ruben_plazier/" target="_blank" rel="noopener">@ruben_plazier</a></div>
+    <div><div class="l mono">Facebook</div><a class="v" href="https://www.facebook.com/experienceklassiek/" target="_blank" rel="noopener">Experience Klassiek</a></div>
+    <div><div class="l mono">Spotify</div><a class="v" href="https://open.spotify.com/artist/5CVAcnl9bhO8wsvssNo37z" target="_blank" rel="noopener" data-i18n="foot_listen">Listen</a></div>
+    <div><div class="l mono" data-i18n="foot_photography">Photography</div><div class="v">Björn Comhaire</div></div>
+  </div>
+  <div class="copyright mono">
+    <span>© 2026 Ruben Plazier</span>
+    <span data-i18n="footer_note">Concept site — vul e-mailadres en agenda nog aan</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const palette = ['#e3392b','#1d3ea8','#f2c230','#0d0d0d'];
+
+  let ctx;
+  let muted = true;
+  function getCtx(){
+    if(!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if(ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  }
+  function playNote(freq, velocity){
+    if(muted) return;
+    const c = getCtx();
+    const now = c.currentTime;
+    const gain = c.createGain();
+    const filter = c.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 3600;
+    gain.connect(filter); filter.connect(c.destination);
+    [1, 2.01, 3.0].forEach((mult, idx) => {
+      const osc = c.createOscillator();
+      osc.type = idx === 0 ? 'triangle' : 'sine';
+      osc.frequency.value = freq * mult;
+      const pg = c.createGain();
+      pg.gain.value = idx === 0 ? 1 : 0.2 / (idx+1);
+      osc.connect(pg); pg.connect(gain);
+      osc.start(now); osc.stop(now + 1.6);
+    });
+    const peak = 0.24 * velocity;
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(peak, now + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.5);
+  }
+
+  const keysEl = document.getElementById('keys');
+  const A4 = 440;
+  const freqFor = semi => A4 * Math.pow(2, semi/12);
+  const offsets = [-9,-7,-5,-4,-2,0,2,3,5,7,8,10,12,14,15,17,19,20];
+  offsets.forEach(semi => {
+    const k = document.createElement('div');
+    k.className = 'key';
+    k.dataset.freq = freqFor(semi);
+    keysEl.appendChild(k);
+  });
+
+  const canvas = document.getElementById('canvas');
+  const hint = document.getElementById('hint');
+  let markCount = 0;
+  const maxMarks = 40;
+
+  function paintMark(semi){
+    hint.style.opacity = '0';
+    const mark = document.createElement('div');
+    mark.className = 'mark';
+    const isCircle = Math.random() > 0.4;
+    const size = 14 + Math.random()*44;
+    const color = palette[Math.floor(Math.random()*palette.length)];
+    mark.style.width = size+'px';
+    mark.style.height = size+'px';
+    mark.style.background = color;
+    mark.style.borderRadius = isCircle ? '50%' : (Math.random()>0.5 ? '0%' : '4px');
+    const normPitch = (semi + 9) / 30;
+    const top = Math.max(10, Math.min(90, (1-normPitch)*80 + (Math.random()*16-8)));
+    const left = Math.random()*90 + 5;
+    mark.style.top = top+'%';
+    mark.style.left = left+'%';
+    if(Math.random() > 0.75){
+      mark.style.transform = `translate(-50%,-50%) rotate(${Math.floor(Math.random()*45)}deg)`;
+    }
+    canvas.appendChild(mark);
+    markCount++;
+    if(markCount > maxMarks){
+      const oldest = canvas.querySelector('.mark');
+      if(oldest){
+        oldest.style.transition = 'opacity .6s ease';
+        oldest.style.opacity = '0';
+        setTimeout(()=> oldest.remove(), 600);
+      }
+    }
+  }
+
+  function pressKey(el, velocity){
+    playNote(parseFloat(el.dataset.freq), velocity);
+    el.classList.add('active');
+    setTimeout(()=> el.classList.remove('active'), 130);
+    const idx = Array.from(keysEl.children).indexOf(el);
+    paintMark(offsets[idx] !== undefined ? offsets[idx] : 0);
+  }
+
+  let isMouseDown = false;
+  document.addEventListener('mousedown', ()=> isMouseDown = true);
+  document.addEventListener('mouseup', ()=> isMouseDown = false);
+  keysEl.addEventListener('mousedown', e => { if(e.target.classList.contains('key')) pressKey(e.target, 0.9); });
+  keysEl.addEventListener('mouseover', e => { if(isMouseDown && e.target.classList.contains('key')) pressKey(e.target, 0.7); });
+
+  const muteBtn = document.getElementById('muteBtn');
+  if(muteBtn){
+    muteBtn.addEventListener('click', () => {
+      muted = !muted;
+      muteBtn.classList.toggle('unmuted', !muted);
+      const key = muted ? 'mute_off' : 'mute_on';
+      muteBtn.setAttribute('data-i18n', key);
+      const lang = document.documentElement.lang || 'en';
+      const dict = (window.__i18n && window.__i18n[lang]) || {};
+      if(dict[key]) muteBtn.textContent = dict[key];
+      if(!muted) getCtx();
+    });
+  }
+
+  keysEl.addEventListener('touchstart', e => {
+    for(const t of e.touches){
+      const el = document.elementFromPoint(t.clientX, t.clientY);
+      if(el && el.classList.contains('key')) pressKey(el, 0.9);
+    }
+  }, {passive:true});
+
+  if(!prefersReduced){
+    // pleasant pentatonic-ish subset of indices for ambient wandering
+    const ambientIdx = [0,2,4,5,7,9,11,13,10,8,6,3,1];
+    let ambientTimer = null;
+
+    function scheduleAmbient(){
+      const delay = 1300 + Math.random()*1800;
+      ambientTimer = setTimeout(() => {
+        if(document.visibilityState === 'visible'){
+          const keys = Array.from(keysEl.children);
+          const idx = ambientIdx[Math.floor(Math.random()*ambientIdx.length)];
+          if(keys[idx]) pressKey(keys[idx], 0.28 + Math.random()*0.18);
+        }
+        scheduleAmbient();
+      }, delay);
+    }
+
+    window.addEventListener('load', () => {
+      const keys = Array.from(keysEl.children);
+      let t = 900;
+      [0,2,4,5,7,9].forEach(idx => {
+        setTimeout(() => { if(keys[idx]) pressKey(keys[idx], 0.55); }, t);
+        t += 200;
+      });
+      setTimeout(scheduleAmbient, t + 1000);
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if(document.visibilityState === 'visible' && !ambientTimer){
+        scheduleAmbient();
+      }
+    });
+  }
+})();
+</script>
+
+<script>
+(function(){
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---------- Hero letters ----------
+  const heroTitle = document.getElementById('heroTitle');
+  function buildWord(word, lineDelayStart){
+    const line = document.createElement('div');
+    line.className = 'letters';
+    word.split('').forEach((ch, i) => {
+      const s = document.createElement('span');
+      s.textContent = ch === ' ' ? '\u00A0' : ch;
+      s.style.animationDelay = (lineDelayStart + i*0.035) + 's';
+      line.appendChild(s);
+    });
+    return line;
+  }
+  if(prefersReduced){
+    heroTitle.textContent = 'RUBEN PLAZIER';
+  } else {
+    heroTitle.appendChild(buildWord('RUBEN', 0.1));
+    heroTitle.appendChild(document.createElement('br'));
+    heroTitle.appendChild(buildWord('PLAZIER', 0.35));
+  }
+
+  // ---------- Scroll progress bar ----------
+  const bar = document.getElementById('progressBar');
+  function updateBar(){
+    const h = document.documentElement;
+    const scrolled = h.scrollTop;
+    const max = h.scrollHeight - h.clientHeight;
+    bar.style.width = max > 0 ? (scrolled / max * 100) + '%' : '0%';
+  }
+  document.addEventListener('scroll', updateBar, {passive:true});
+  updateBar();
+
+  // ---------- Cursor dot ----------
+  const dot = document.getElementById('cursorDot');
+  if(matchMedia('(hover:hover)').matches){
+    document.addEventListener('mousemove', e => {
+      dot.style.left = e.clientX + 'px';
+      dot.style.top = e.clientY + 'px';
+      dot.classList.add('show');
+    });
+    document.addEventListener('mouseleave', () => dot.classList.remove('show'));
+    document.querySelectorAll('.ph, a, .key').forEach(el => {
+      el.addEventListener('mouseenter', () => dot.classList.add('big'));
+      el.addEventListener('mouseleave', () => dot.classList.remove('big'));
+    });
+  }
+
+  // ---------- Scroll reveal ----------
+  const revealEls = document.querySelectorAll('.reveal');
+  if(prefersReduced || !('IntersectionObserver' in window)){
+    revealEls.forEach(el => el.classList.add('in'));
+  } else {
+    // stagger items that share a parent container (e.g. gallery grid)
+    const groups = new Map();
+    revealEls.forEach(el => {
+      const parent = el.parentElement;
+      if(!groups.has(parent)) groups.set(parent, []);
+      groups.get(parent).push(el);
+    });
+    groups.forEach(list => {
+      list.forEach((el, i) => {
+        el.style.transitionDelay = Math.min(i * 90, 360) + 'ms';
+      });
+    });
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach(el => io.observe(el));
+  }
+
+  // ---------- Photo tilt on hover ----------
+  if(!prefersReduced && matchMedia('(hover:hover)').matches){
+    document.querySelectorAll('.ph').forEach(el => {
+      const baseTransition = el.classList.contains('reveal')
+        ? 'clip-path 1s cubic-bezier(.16,.84,.44,1), transform .3s ease'
+        : 'transform .3s ease';
+      el.style.transition = baseTransition;
+      el.addEventListener('mousemove', e => {
+        const r = el.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        el.style.transform = `perspective(700px) rotateX(${py * -6}deg) rotateY(${px * 6}deg) scale(1.02)`;
+      });
+      el.addEventListener('mouseleave', () => {
+        el.style.transform = '';
+      });
+    });
+  }
+  // ---------- Bio toggle ----------
+  const bioToggle = document.getElementById('bioToggle');
+  if(bioToggle){
+    const shortEl = document.getElementById('bioShort');
+    const longEl = document.getElementById('bioLong');
+    bioToggle.addEventListener('click', e => {
+      const btn = e.target.closest('.bio-tab');
+      if(!btn) return;
+      bioToggle.querySelectorAll('.bio-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      const isShort = btn.dataset.bio === 'short';
+      shortEl.style.display = isShort ? '' : 'none';
+      longEl.style.display = isShort ? 'none' : '';
+    });
+  }
+
+  // ---------- Parallax depth on photos ----------
+  if(!prefersReduced){
+    const parallaxEls = Array.from(document.querySelectorAll('.ph')).filter(el => el.style.backgroundImage);
+    let ticking = false;
+    function updateParallax(){
+      const vh = window.innerHeight;
+      parallaxEls.forEach(el => {
+        const rect = el.getBoundingClientRect();
+        const centerOffset = (rect.top + rect.height/2) - vh/2;
+        const span = (vh/2 + rect.height/2) || 1;
+        const progress = Math.max(-1, Math.min(1, centerOffset / span));
+        const posY = 50 - progress * 16;
+        el.style.backgroundPositionY = posY + '%';
+      });
+      ticking = false;
+    }
+    function onScroll(){
+      if(!ticking){
+        requestAnimationFrame(updateParallax);
+        ticking = true;
+      }
+    }
+    if(parallaxEls.length){
+      document.addEventListener('scroll', onScroll, {passive:true});
+      window.addEventListener('resize', onScroll);
+      updateParallax();
+    }
+  }
+
+  // ---------- Lights toggle (dark/light concert-hall switch) ----------
+  const themeToggle = document.getElementById('themeToggle');
+  const lightsOverlay = document.getElementById('lightsOverlay');
+  if(themeToggle){
+    themeToggle.addEventListener('click', () => {
+      lightsOverlay.classList.add('active');
+      setTimeout(() => {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+        themeToggle.textContent = isDark ? '☾' : '☀';
+      }, prefersReduced ? 0 : 260);
+      setTimeout(() => lightsOverlay.classList.remove('active'), prefersReduced ? 0 : 320);
+    });
+  }
+
+  // ---------- Gallery lightbox ----------
+  const galleryImgs = Array.from(document.querySelectorAll('#galleryGrid .gallery-item img'));
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  if(lightbox && lightboxImg && galleryImgs.length){
+    const urls = galleryImgs.map(img => img.getAttribute('src'));
+    const alts = galleryImgs.map(img => img.getAttribute('alt') || '');
+    let currentIndex = 0;
+
+    function openLightbox(i){
+      currentIndex = i;
+      lightboxImg.src = urls[i];
+      lightboxImg.alt = alts[i];
+      lightbox.classList.add('active');
+      lightbox.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox(){
+      lightbox.classList.remove('active');
+      lightbox.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+    function stepLightbox(delta){
+      currentIndex = (currentIndex + delta + urls.length) % urls.length;
+      lightboxImg.src = urls[currentIndex];
+      lightboxImg.alt = alts[currentIndex];
+    }
+
+    galleryImgs.forEach((img, i) => {
+      img.closest('.gallery-item').addEventListener('click', () => openLightbox(i));
+    });
+    const lbClose = document.getElementById('lightboxClose');
+    const lbPrev = document.getElementById('lightboxPrev');
+    const lbNext = document.getElementById('lightboxNext');
+    if(lbClose) lbClose.addEventListener('click', closeLightbox);
+    if(lbPrev) lbPrev.addEventListener('click', () => stepLightbox(-1));
+    if(lbNext) lbNext.addEventListener('click', () => stepLightbox(1));
+    lightbox.addEventListener('click', e => { if(e.target === lightbox) closeLightbox(); });
+    document.addEventListener('keydown', e => {
+      if(!lightbox.classList.contains('active')) return;
+      if(e.key === 'Escape') closeLightbox();
+      if(e.key === 'ArrowRight') stepLightbox(1);
+      if(e.key === 'ArrowLeft') stepLightbox(-1);
+    });
+  }
+})();
+</script>
+
+<script>
+(function(){
+  const translations = {
+    en: {
+      nav_gallery:"Gallery", nav_about:"About", nav_performances:"Performances", nav_agenda:"Agenda", nav_press:"Press", nav_contact:"Contact", nav_cta:"Contact now",
+      hero_kicker:"Pianist — Antwerp / Paris",
+      hero_p:"Born in Delft, musically formed in Paris in the tradition of the Russian piano school. Solo recitals, a duo with violinist Karen Su, and the concert series Experience Klassiek.",
+      video_fallback:"Watch on YouTube ↗",
+      gallery_label:"Gallery", gallery_title:"On stage, off stage", photo_credit:"Photo — Björn Comhaire",
+      agenda_label:"Agenda", agenda_title:"Upcoming",
+      agenda_row1:"Fill in programme — e.g. Debussy & Scriabin",
+      agenda_row2:"Duo with Karen Su — fill in programme",
+      agenda_row3:"Experience Klassiek — fill in edition",
+      agenda_venue:"Fill in venue + city", agenda_tickets:"Tickets", agenda_foot:"Full calendar →", agenda_foot_less:"Show less ←",
+      agenda_empty:"No upcoming concerts — check back soon.",
+      about_label:"About", about_title:"The approach",
+      about_quote:"\"I strive to tell a compelling story through both my words and music.\"",
+      bio_tab_short:"Short bio", bio_tab_long:"Long bio",
+      bio_short:"<p>Ruben Plazier (Delft, 1998) is a classical pianist formed in the tradition of the Russian piano school. At fourteen he began at the Rotterdam Conservatory under Stéphane De May, who introduced him to French pianist Jean-Bernard Pommier — a meeting that would change his playing for good. After years of traveling between Rotterdam, Béziers and Paris, he was unanimously awarded his Diplôme Supérieur de Concertiste at the École Normale de Musique Alfred Cortot. As a soloist, he has performed concertos with orchestra and appeared in halls including the Concertgebouw Amsterdam and De Doelen Rotterdam, as well as in New York and Los Angeles. Beyond the stage, he curates the classical programming for De Doelen (2026/27 season) and Muziekgebouw Eindhoven, and performs as a duo with violinist Karen Su and as founder of the concert series Experience Klassiek.</p>",
+      bio_long:"<p>Ruben Plazier was born in Delft in 1998 and began playing piano at six, on the instrument his parents kept at home. After his first lessons at the local music school in Dordrecht, a handful of lessons with Wibi Soerjadi at thirteen lit a spark that would set his course.</p><p>At fourteen, Ruben was admitted to the Rotterdam Conservatory, where he studied with the Belgian pianist Stéphane De May. Through De May, he met the French pianist Jean-Bernard Pommier — an encounter that would change everything. For three years, Ruben travelled to Béziers in the south of France to play for Pommier, while completing his Bachelor's degree with De May in Rotterdam.</p><p>When Pommier began teaching at the École Normale de Musique Alfred Cortot in Paris, Ruben started commuting weekly between Rotterdam and Paris. There, unanimously awarded by the jury each time, he earned his Diplôme Supérieur d'Enseignement, his Diplôme Supérieur d'Exécution, and in 2022, his Diplôme Supérieur de Concertiste. The close bond Ruben built with Pommier left a lasting mark on his playing: through him, the old Russian piano school was passed down, with its thinking on sound and phrasing.</p><p>As a soloist with orchestra, Ruben has performed concertos by composers including Rachmaninoff, Mendelssohn, Poulenc and Mozart. He has performed in halls including the Concertgebouw Amsterdam, De Doelen Rotterdam, TivoliVredenburg Utrecht, Muziekgebouw Eindhoven, Salle Cortot Paris, the Philharmonie Liège and the Rudolfinum in Prague, as well as in New York and Los Angeles. His awards include the international Festival d'Anniviers prize in Switzerland and first prize at the Archipel Music Competition, and he has taken masterclasses with, among others, Angela Hewitt, Frank Braley and Håkon Austbø.</p><p>Beyond performing, Ruben also works as a programmer: he curated the classical programming for De Doelen Rotterdam's 2026/27 season, and currently oversees the classical programming at Muziekgebouw Eindhoven.</p><p>Together with violinist Karen Su, he founded the concert series Experience Klassiek and its accompanying Academy, where he now guides the next generation of musicians — much as he himself was once guided.</p>",
+      tag_conservatory:"Rotterdam Conservatory",
+      mentor_label:"Mentor",
+      mentor_body:"<p>Ruben met Jean-Bernard Pommier through his first teacher, Stéphane De May, at the Rotterdam Conservatory. What began as a few lessons in Béziers grew into one of the defining relationships of his musical life: years of travel, first to the south of France, later weekly to Paris, for lessons that stretched into long conversations over breakfast, dinner, and late into the night. Pommier demanded a willingness to start over, again and again, and gave in return something that reached far beyond technique: a way of listening, of thinking about sound, that he himself had inherited from generations of great pedagogues within the Russian piano school. That inheritance now sits at the core of how Ruben plays, and teaches.</p>",
+      mentor_video_caption:"Beethoven, Les Adieux — with Pommier, 2021",
+      mentor_photo_cap1:"Béziers, lesson", mentor_photo_cap2:"At the piano", mentor_photo_cap3:"Off duty",
+      studio_label:"Composed live — or play it yourself", studio_sub:"Composition No. 01", studio_hint:"click the keys below",
+      performances_title:"Three ways to hear it",
+      perf_tag_solo:"Solo", perf_title_solo:"Recitals",
+      perf_desc_solo:"Full-length programmes centred on French repertoire and the Russian pianistic lineage — Debussy, Scriabin, and composers just outside the standard canon.",
+      perf_tag_duo:"Duo", perf_title_duo:"With Karen Su",
+      perf_desc_duo:"A working partnership built over years of shared repertoire, from sonata literature to newly paired programmes for smaller, more intimate halls.",
+      perf_tag_trio:"Trio", perf_title_trio:"With Karen Su &amp; Luc Tooten",
+      perf_desc_trio:"A trio programme built around Karen Su on violin and Luc Tooten on cello, pairing chamber repertoire with the same attention to line and story as the solo and duo work.",
+      perf_photo_trio:"Add photo — trio",
+      perf_tag_mge:"Programming", perf_title_mge:"Muziekgebouw Eindhoven",
+      perf_desc_mge:"Ruben curates the classical programming at Muziekgebouw Eindhoven.",
+      perf_photo_mge:"Add photo — Muziekgebouw Eindhoven",
+      perf_link_mge:"View the classical programme →",
+      press_label:"Press & Kit", press_title:"In their words",
+      quote1:"\"Add a review quote here.\"", quote2:"\"Add a second review quote here.\"", quote_source:"— Publication, year",
+      kit_download:"Download", kit_repertoire_t:"Repertoire", kit_repertoire_d:"Full list, PDF",
+      kit_presskit_t:"Press kit", kit_presskit_d:"High-res photos", kit_bio_d:"Short + long, .docx",
+      footer_label:"Get in touch",
+      footer_heading:"Every concert starts with a <span class=\"it\">conversation</span>. Let's have it.",
+      foot_location:"Location", foot_contact:"Contact", foot_listen:"Listen", foot_photography:"Photography",
+      footer_note:"Concept site — add email and agenda",
+      mute_off:"Sound off", mute_on:"Sound on"
+    },
+    nl: {
+      nav_gallery:"Foto's", nav_about:"Over", nav_performances:"Optredens", nav_agenda:"Agenda", nav_press:"Pers", nav_contact:"Contact", nav_cta:"Contacteer nu",
+      hero_kicker:"Pianist — Antwerpen / Parijs",
+      hero_p:"Geboren in Delft, muzikaal gevormd in Parijs binnen de traditie van de Russische pianoschool. Solorecitals, een duo met violiste Karen Su, en de concertreeks Experience Klassiek.",
+      video_fallback:"Bekijk op YouTube ↗",
+      gallery_label:"Foto's", gallery_title:"Op het podium, erbuiten", photo_credit:"Foto — Björn Comhaire",
+      agenda_label:"Agenda", agenda_title:"Binnenkort",
+      agenda_row1:"Vul programma in — bv. Debussy & Scriabin",
+      agenda_row2:"Duo met Karen Su — vul programma in",
+      agenda_row3:"Experience Klassiek — vul editie in",
+      agenda_venue:"Vul zaal + stad in", agenda_tickets:"Tickets", agenda_foot:"Volledige agenda →", agenda_foot_less:"Toon minder ←",
+      agenda_empty:"Geen aankomende concerten — kijk binnenkort terug.",
+      about_label:"Over", about_title:"De aanpak",
+      about_quote:"\"Ik probeer een pakkend verhaal te vertellen, zowel met mijn woorden als met mijn muziek.\"",
+      bio_tab_short:"Korte bio", bio_tab_long:"Lange bio",
+      bio_short:"<p>Ruben Plazier (Delft, 1998) is een klassiek pianist, gevormd in de traditie van de Russische pianoschool. Op zijn veertiende begon hij aan het Rotterdams Conservatorium bij Stéphane De May, die hem in contact bracht met de Franse pianist Jean-Bernard Pommier — een ontmoeting die zijn spel voorgoed zou veranderen. Na jaren pendelen tussen Rotterdam, Béziers en Parijs behaalde hij met unanimiteit van de jury zijn Diplôme Supérieur de Concertiste aan de École Normale de Musique Alfred Cortot. Als solist speelde hij concerto's met orkest en trad hij op in zalen als het Concertgebouw Amsterdam en De Doelen Rotterdam, evenals in New York en Los Angeles. Naast het podium stelt hij de klassieke programmering samen van De Doelen (seizoen 2026/27) en het Muziekgebouw Eindhoven, en is hij actief als duo met violiste Karen Su en oprichter van de concertreeks Experience Klassiek.</p>",
+      bio_long:"<p>Ruben Plazier werd in 1998 geboren in Delft en begon op zijn zesde met pianospelen, op de piano die zijn ouders thuis hadden staan. Na de eerste lessen aan de plaatselijke muziekschool in Dordrecht kreeg hij op zijn dertiende enkele lessen van Wibi Soerjadi, die bij hem een vonk deed ontstaan die zijn richting zou bepalen.</p><p>Op zijn veertiende werd Ruben toegelaten tot het Rotterdams Conservatorium, waar hij ging studeren bij de Belgische pianist Stéphane De May. Via De May maakte hij kennis met de Franse pianist Jean-Bernard Pommier — een ontmoeting die alles zou veranderen. Drie jaar lang reisde Ruben naar Béziers, in het zuiden van Frankrijk, om voor Pommier te spelen, terwijl hij tegelijkertijd zijn bachelor voltooide bij De May in Rotterdam.</p><p>Toen Pommier ging doceren aan de École Normale de Musique Alfred Cortot in Parijs, ging Ruben wekelijks pendelen tussen Rotterdam en Parijs. Hier behaalde hij, telkens met unanimiteit van de jury, zijn Diplôme Supérieur d'Enseignement, zijn Diplôme Supérieur d'Exécution, en in 2022 zijn Diplôme Supérieur de Concertiste. De bijzondere band die Ruben met Pommier opbouwde, liet een blijvend spoor na in zijn spel: via hem kreeg hij de oude Russische pianoschool doorgegeven, met haar denken over klank en frasering.</p><p>Als solist met orkest speelde Ruben concerto's van componisten als Rachmaninoff, Mendelssohn, Poulenc en Mozart. Hij trad op in zalen als het Concertgebouw Amsterdam, De Doelen Rotterdam, TivoliVredenburg Utrecht, Muziekgebouw Eindhoven, Salle Cortot Parijs, de Philharmonie Luik en het Rudolfinum in Praag, en gaf concerten in New York en Los Angeles. Hij won onder meer de internationale Festival d'Anniviers-prijs in Zwitserland en de eerste prijs op de Archipel Music Competition, en volgde masterclasses bij onder anderen Angela Hewitt, Frank Braley en Håkon Austbø.</p><p>Naast zijn werk als uitvoerend musicus is Ruben ook actief als programmeur: hij stelde de klassieke programmering samen voor het seizoen 2026/27 van De Doelen in Rotterdam, en is momenteel verantwoordelijk voor de klassieke programmering van het Muziekgebouw Eindhoven.</p><p>Samen met violiste Karen Su richtte hij de concertreeks Experience Klassiek op, en de bijbehorende Academy waarin hij de volgende generatie musici begeleidt — net zoals hij ooit zelf werd begeleid.</p>",
+      tag_conservatory:"Rotterdams Conservatorium",
+      mentor_label:"Leermeester",
+      mentor_body:"<p>Ruben ontmoette Jean-Bernard Pommier via zijn eerste leraar, Stéphane De May, aan het Rotterdams Conservatorium. Wat begon als een paar lessen in Béziers groeide uit tot een van de bepalende relaties in zijn muzikale leven: jaren van reizen, eerst naar het zuiden van Frankrijk, later wekelijks naar Parijs, voor lessen die zich uitstrekten tot lange gesprekken aan het ontbijt, het avondeten en tot diep in de nacht. Pommier eiste bereidheid om telkens opnieuw te beginnen, en gaf in ruil daarvoor iets dat verder reikte dan techniek: een manier van luisteren, van denken over klank, die hij op zijn beurt had geërfd van generaties grote pedagogen binnen de Russische pianoschool. Die erfenis vormt vandaag de kern van hoe Ruben speelt en lesgeeft.</p>",
+      mentor_video_caption:"Beethoven, Les Adieux — met Pommier, 2021",
+      mentor_photo_cap1:"Béziers, les", mentor_photo_cap2:"Aan de vleugel", mentor_photo_cap3:"Buiten de lesuren",
+      studio_label:"Speelt zichzelf — of speel zelf", studio_sub:"Compositie nr. 01", studio_hint:"klik op de toetsen hieronder",
+      performances_title:"Drie manieren om te luisteren",
+      perf_tag_solo:"Solo", perf_title_solo:"Recitals",
+      perf_desc_solo:"Avondvullende programma's rond Frans repertoire en de Russische pianistische traditie — Debussy, Scriabin, en componisten net buiten het gangbare canon.",
+      perf_tag_duo:"Duo", perf_title_duo:"Met Karen Su",
+      perf_desc_duo:"Een samenwerking die over jaren is opgebouwd rond gedeeld repertoire, van sonateliteratuur tot nieuw samengestelde programma's voor kleinere, intiemere zalen.",
+      perf_tag_trio:"Trio", perf_title_trio:"Met Karen Su &amp; Luc Tooten",
+      perf_desc_trio:"Een trioprogramma rond Karen Su op viool en Luc Tooten op cello, waarin kamermuziekrepertoire dezelfde aandacht krijgt voor lijn en verhaal als het solo- en duowerk.",
+      perf_photo_trio:"Voeg foto toe — trio",
+      perf_tag_mge:"Programmering", perf_title_mge:"Muziekgebouw Eindhoven",
+      perf_desc_mge:"Ruben stelt de klassieke programmering samen van het Muziekgebouw Eindhoven.",
+      perf_photo_mge:"Voeg foto toe — Muziekgebouw Eindhoven",
+      perf_link_mge:"Bekijk het klassieke programma →",
+      press_label:"Pers & Kit", press_title:"In hun woorden",
+      quote1:"\"Vul hier een recensiecitaat in.\"", quote2:"\"Vul hier een tweede recensiecitaat in.\"", quote_source:"— Publicatie, jaar",
+      kit_download:"Download", kit_repertoire_t:"Repertoire", kit_repertoire_d:"Volledige lijst, PDF",
+      kit_presskit_t:"Perskit", kit_presskit_d:"Foto's in hoge resolutie", kit_bio_d:"Kort + lang, .docx",
+      footer_label:"Neem contact op",
+      footer_heading:"Elk concert begint met een <span class=\"it\">gesprek</span>. Laten we het voeren.",
+      foot_location:"Locatie", foot_contact:"Contact", foot_listen:"Luister", foot_photography:"Fotografie",
+      footer_note:"Concept site — vul e-mailadres en agenda nog aan",
+      mute_off:"Geluid uit", mute_on:"Geluid aan"
+    },
+    fr: {
+      nav_gallery:"Galerie", nav_about:"À propos", nav_performances:"Concerts", nav_agenda:"Agenda", nav_press:"Presse", nav_contact:"Contact", nav_cta:"Contactez maintenant",
+      hero_kicker:"Pianiste — Anvers / Paris",
+      hero_p:"Né à Delft, formé musicalement à Paris dans la tradition de l'école pianistique russe. Récitals en solo, un duo avec la violoniste Karen Su, et la série de concerts Experience Klassiek.",
+      video_fallback:"Voir sur YouTube ↗",
+      gallery_label:"Galerie", gallery_title:"Sur scène, en coulisses", photo_credit:"Photo — Björn Comhaire",
+      agenda_label:"Agenda", agenda_title:"À venir",
+      agenda_row1:"À compléter — ex. Debussy & Scriabine",
+      agenda_row2:"Duo avec Karen Su — programme à compléter",
+      agenda_row3:"Experience Klassiek — édition à compléter",
+      agenda_venue:"Salle et ville à compléter", agenda_tickets:"Billets", agenda_foot:"Agenda complet →", agenda_foot_less:"Afficher moins ←",
+      agenda_empty:"Aucun concert à venir — revenez bientôt.",
+      about_label:"À propos", about_title:"L'approche",
+      about_quote:"« Je m'efforce de raconter une histoire captivante, autant par mes mots que par ma musique. »",
+      bio_tab_short:"Bio courte", bio_tab_long:"Bio longue",
+      bio_short:"<p>Ruben Plazier (Delft, 1998) est un pianiste classique formé dans la tradition de l'école pianistique russe. À quatorze ans, il entre au Conservatoire de Rotterdam auprès de Stéphane De May, qui lui fait découvrir le pianiste français Jean-Bernard Pommier — une rencontre qui changera durablement son jeu. Après des années de va-et-vient entre Rotterdam, Béziers et Paris, il obtient à l'unanimité du jury son Diplôme Supérieur de Concertiste à l'École Normale de Musique Alfred Cortot. En soliste, il a interprété des concertos avec orchestre et s'est produit dans des salles telles que le Concertgebouw d'Amsterdam et De Doelen de Rotterdam, ainsi qu'à New York et Los Angeles. Au-delà de la scène, il conçoit la programmation classique de De Doelen (saison 2026/27) et du Muziekgebouw d'Eindhoven, et se produit en duo avec la violoniste Karen Su et en tant que fondateur de la série de concerts Experience Klassiek.</p>",
+      bio_long:"<p>Ruben Plazier est né à Delft en 1998 et a commencé le piano à six ans, sur l'instrument que ses parents avaient à la maison. Après ses premiers cours à l'école de musique locale de Dordrecht, quelques leçons avec Wibi Soerjadi à treize ans ont allumé une étincelle qui allait tracer sa voie.</p><p>À quatorze ans, Ruben est admis au Conservatoire de Rotterdam, où il étudie avec le pianiste belge Stéphane De May. C'est par De May qu'il rencontre le pianiste français Jean-Bernard Pommier — une rencontre qui allait tout changer. Pendant trois ans, Ruben se rend à Béziers, dans le sud de la France, pour jouer pour Pommier, tout en achevant sa licence auprès de De May à Rotterdam.</p><p>Lorsque Pommier commence à enseigner à l'École Normale de Musique Alfred Cortot à Paris, Ruben se met à faire l'aller-retour chaque semaine entre Rotterdam et Paris. Il y obtient, à chaque fois à l'unanimité du jury, son Diplôme Supérieur d'Enseignement, son Diplôme Supérieur d'Exécution, puis en 2022 son Diplôme Supérieur de Concertiste. Le lien étroit tissé avec Pommier a durablement marqué son jeu : à travers lui s'est transmise la vieille école pianistique russe, avec sa pensée du son et du phrasé.</p><p>En tant que soliste avec orchestre, Ruben a interprété des concertos de compositeurs tels que Rachmaninov, Mendelssohn, Poulenc et Mozart. Il s'est produit dans des salles telles que le Concertgebouw d'Amsterdam, De Doelen de Rotterdam, le TivoliVredenburg d'Utrecht, le Muziekgebouw d'Eindhoven, la Salle Cortot à Paris, la Philharmonie de Liège et le Rudolfinum de Prague, ainsi qu'à New York et Los Angeles. Il a notamment remporté le prix international du Festival d'Anniviers en Suisse et le premier prix du Concours Archipel, et a suivi des masterclasses avec, entre autres, Angela Hewitt, Frank Braley et Håkon Austbø.</p><p>Au-delà de l'interprétation, Ruben travaille également comme programmateur : il a conçu la programmation classique de la saison 2026/27 de De Doelen à Rotterdam, et supervise actuellement la programmation classique du Muziekgebouw d'Eindhoven.</p><p>Avec la violoniste Karen Su, il a fondé la série de concerts Experience Klassiek ainsi que l'Academy qui l'accompagne, où il guide aujourd'hui la nouvelle génération de musiciens — comme il fut lui-même guidé autrefois.</p>",
+      tag_conservatory:"Conservatoire de Rotterdam",
+      mentor_label:"Maître",
+      mentor_body:"<p>Ruben a rencontré Jean-Bernard Pommier par l'intermédiaire de son premier professeur, Stéphane De May, au Conservatoire de Rotterdam. Ce qui n'était au départ que quelques leçons à Béziers est devenu l'une des relations fondatrices de sa vie musicale : des années de déplacements, d'abord vers le sud de la France, puis chaque semaine vers Paris, pour des leçons qui se prolongeaient en longues conversations au petit-déjeuner, au dîner, et tard dans la nuit. Pommier exigeait une volonté de tout recommencer, sans cesse, et offrait en retour bien plus que la technique : une manière d'écouter, de penser le son, héritée lui-même de générations de grands pédagogues de l'école pianistique russe. Cet héritage est aujourd'hui au cœur du jeu de Ruben, et de son enseignement.</p>",
+      mentor_video_caption:"Beethoven, Les Adieux — avec Pommier, 2021",
+      mentor_photo_cap1:"Béziers, leçon", mentor_photo_cap2:"Au piano", mentor_photo_cap3:"En dehors des cours",
+      studio_label:"Composé en direct — ou jouez vous-même", studio_sub:"Composition n° 01", studio_hint:"cliquez sur les touches ci-dessous",
+      performances_title:"Trois façons de l'écouter",
+      perf_tag_solo:"Solo", perf_title_solo:"Récitals",
+      perf_desc_solo:"Programmes solo complets centrés sur le répertoire français et la lignée pianistique russe — Debussy, Scriabine, et des compositeurs juste en marge du canon habituel.",
+      perf_tag_duo:"Duo", perf_title_duo:"Avec Karen Su",
+      perf_desc_duo:"Une collaboration construite au fil des années autour d'un répertoire partagé, de la littérature pour sonate à des programmes inédits pensés pour des salles plus intimes.",
+      perf_tag_trio:"Trio", perf_title_trio:"Avec Karen Su &amp; Luc Tooten",
+      perf_desc_trio:"Un programme en trio avec Karen Su au violon et Luc Tooten au violoncelle, alliant répertoire de musique de chambre et la même attention à la ligne et au récit que le travail en solo et en duo.",
+      perf_photo_trio:"Photo à ajouter — trio",
+      perf_tag_mge:"Programmation", perf_title_mge:"Muziekgebouw Eindhoven",
+      perf_desc_mge:"Ruben conçoit la programmation classique du Muziekgebouw Eindhoven.",
+      perf_photo_mge:"Photo à ajouter — Muziekgebouw Eindhoven",
+      perf_link_mge:"Voir le programme classique →",
+      press_label:"Presse & Kit", press_title:"Dans leurs mots",
+      quote1:"« Citation de presse à ajouter ici. »", quote2:"« Deuxième citation de presse à ajouter ici. »", quote_source:"— Publication, année",
+      kit_download:"Télécharger", kit_repertoire_t:"Répertoire", kit_repertoire_d:"Liste complète, PDF",
+      kit_presskit_t:"Dossier de presse", kit_presskit_d:"Photos haute résolution", kit_bio_d:"Courte + longue, .docx",
+      footer_label:"Contactez-moi",
+      footer_heading:"Chaque concert commence par une <span class=\"it\">conversation</span>. Ayons-la.",
+      foot_location:"Localisation", foot_contact:"Contact", foot_listen:"Écouter", foot_photography:"Photographie",
+      footer_note:"Site concept — e-mail et agenda à compléter",
+      mute_off:"Son coupé", mute_on:"Son activé"
+    },
+    de: {
+      nav_gallery:"Galerie", nav_about:"Über", nav_performances:"Auftritte", nav_agenda:"Termine", nav_press:"Presse", nav_contact:"Kontakt", nav_cta:"Jetzt kontaktieren",
+      hero_kicker:"Pianist — Antwerpen / Paris",
+      hero_p:"Geboren in Delft, musikalisch geprägt in Paris in der Tradition der russischen Klavierschule. Solo-Rezitals, ein Duo mit der Geigerin Karen Su, und die Konzertreihe Experience Klassiek.",
+      video_fallback:"Auf YouTube ansehen ↗",
+      gallery_label:"Galerie", gallery_title:"Auf der Bühne, dahinter", photo_credit:"Foto — Björn Comhaire",
+      agenda_label:"Termine", agenda_title:"Demnächst",
+      agenda_row1:"Programm einfügen — z. B. Debussy & Skrjabin",
+      agenda_row2:"Duo mit Karen Su — Programm einfügen",
+      agenda_row3:"Experience Klassiek — Ausgabe einfügen",
+      agenda_venue:"Veranstaltungsort + Stadt einfügen", agenda_tickets:"Tickets", agenda_foot:"Vollständiger Kalender →", agenda_foot_less:"Weniger anzeigen ←",
+      agenda_empty:"Keine bevorstehenden Konzerte — schau bald wieder vorbei.",
+      about_label:"Über", about_title:"Der Ansatz",
+      about_quote:"„Ich versuche, sowohl mit meinen Worten als auch mit meiner Musik eine mitreißende Geschichte zu erzählen.“",
+      bio_tab_short:"Kurzbiografie", bio_tab_long:"Ausführliche Biografie",
+      bio_short:"<p>Ruben Plazier (Delft, 1998) ist ein klassischer Pianist, geprägt in der Tradition der russischen Klavierschule. Mit vierzehn begann er am Konservatorium Rotterdam bei Stéphane De May, der ihn mit dem französischen Pianisten Jean-Bernard Pommier bekannt machte — eine Begegnung, die sein Spiel für immer verändern sollte. Nach Jahren des Pendelns zwischen Rotterdam, Béziers und Paris erhielt er einstimmig sein Diplôme Supérieur de Concertiste an der École Normale de Musique Alfred Cortot. Als Solist spielte er Konzerte mit Orchester und trat in Sälen wie dem Concertgebouw Amsterdam und De Doelen Rotterdam auf, sowie in New York und Los Angeles. Neben der Bühne kuratiert er die klassische Programmierung von De Doelen (Saison 2026/27) und des Muziekgebouw Eindhoven, und tritt im Duo mit der Geigerin Karen Su sowie als Gründer der Konzertreihe Experience Klassiek auf.</p>",
+      bio_long:"<p>Ruben Plazier wurde 1998 in Delft geboren und begann mit sechs Jahren Klavier zu spielen, auf dem Instrument, das seine Eltern zu Hause hatten. Nach ersten Unterrichtsstunden an der örtlichen Musikschule in Dordrecht entfachten einige Stunden bei Wibi Soerjadi im Alter von dreizehn Jahren einen Funken, der seinen weiteren Weg bestimmen sollte.</p><p>Mit vierzehn wurde Ruben am Konservatorium Rotterdam aufgenommen, wo er beim belgischen Pianisten Stéphane De May studierte. Durch De May lernte er den französischen Pianisten Jean-Bernard Pommier kennen — eine Begegnung, die alles verändern sollte. Drei Jahre lang reiste Ruben nach Béziers in Südfrankreich, um für Pommier zu spielen, während er gleichzeitig seinen Bachelor bei De May in Rotterdam abschloss.</p><p>Als Pommier begann, an der École Normale de Musique Alfred Cortot in Paris zu unterrichten, pendelte Ruben fortan wöchentlich zwischen Rotterdam und Paris. Dort erhielt er, jeweils einstimmig von der Jury verliehen, sein Diplôme Supérieur d'Enseignement, sein Diplôme Supérieur d'Exécution und 2022 schließlich sein Diplôme Supérieur de Concertiste. Die enge Verbindung, die Ruben mit Pommier aufbaute, hinterließ bleibende Spuren in seinem Spiel: durch ihn wurde die alte russische Klavierschule weitergegeben, mit ihrem Denken über Klang und Phrasierung.</p><p>Als Solist mit Orchester hat Ruben Konzerte von Komponisten wie Rachmaninow, Mendelssohn, Poulenc und Mozart gespielt. Ruben trat in Sälen wie dem Concertgebouw Amsterdam, De Doelen Rotterdam, dem TivoliVredenburg Utrecht, dem Muziekgebouw Eindhoven, der Salle Cortot Paris, der Philharmonie Lüttich und dem Rudolfinum in Prag auf, außerdem in New York und Los Angeles. Zu seinen Auszeichnungen zählen der internationale Festival-d'Anniviers-Preis in der Schweiz und der erste Preis beim Archipel Music Competition; er nahm zudem an Meisterkursen unter anderem bei Angela Hewitt, Frank Braley und Håkon Austbø teil.</p><p>Neben seiner Tätigkeit als Interpret arbeitet Ruben auch als Programmgestalter: Er kuratierte die klassische Programmierung der Saison 2026/27 von De Doelen in Rotterdam und verantwortet derzeit die klassische Programmierung des Muziekgebouw Eindhoven.</p><p>Gemeinsam mit der Geigerin Karen Su gründete er die Konzertreihe Experience Klassiek sowie die dazugehörige Academy, in der er heute die nächste Generation von Musikern begleitet — so, wie er selbst einst begleitet wurde.</p>",
+      tag_conservatory:"Konservatorium Rotterdam",
+      mentor_label:"Lehrer",
+      mentor_body:"<p>Ruben lernte Jean-Bernard Pommier über seinen ersten Lehrer, Stéphane De May, am Konservatorium Rotterdam kennen. Was mit wenigen Unterrichtsstunden in Béziers begann, wuchs zu einer der prägendsten Beziehungen seines musikalischen Lebens heran: Jahre des Reisens, zunächst in den Süden Frankreichs, später wöchentlich nach Paris, für Unterrichtsstunden, die sich zu langen Gesprächen beim Frühstück, beim Abendessen und bis tief in die Nacht ausdehnten. Pommier verlangte die Bereitschaft, immer wieder von vorn zu beginnen, und gab dafür etwas zurück, das weit über Technik hinausging: eine Art des Hörens, des Denkens über Klang, die er selbst von Generationen großer Pädagogen der russischen Klavierschule geerbt hatte. Dieses Erbe steht heute im Zentrum von Rubens Spiel und seinem Unterrichten.</p>",
+      mentor_video_caption:"Beethoven, Les Adieux — mit Pommier, 2021",
+      mentor_photo_cap1:"Béziers, Unterricht", mentor_photo_cap2:"Am Klavier", mentor_photo_cap3:"Abseits des Unterrichts",
+      studio_label:"Spielt sich selbst — oder spiel es selbst", studio_sub:"Komposition Nr. 01", studio_hint:"auf die Tasten unten klicken",
+      performances_title:"Drei Wege, ihn zu hören",
+      perf_tag_solo:"Solo", perf_title_solo:"Rezitals",
+      perf_desc_solo:"Abendfüllende Programme rund um französisches Repertoire und die russische Klaviertradition — Debussy, Skrjabin und Komponisten abseits des gängigen Kanons.",
+      perf_tag_duo:"Duo", perf_title_duo:"Mit Karen Su",
+      perf_desc_duo:"Eine über Jahre gewachsene Partnerschaft rund um gemeinsames Repertoire, von Sonatenliteratur bis zu neu zusammengestellten Programmen für kleinere, intimere Säle.",
+      perf_tag_trio:"Trio", perf_title_trio:"Mit Karen Su &amp; Luc Tooten",
+      perf_desc_trio:"Ein Trio-Programm mit Karen Su an der Geige und Luc Tooten am Cello, das Kammermusikrepertoire mit derselben Aufmerksamkeit für Linie und Erzählung verbindet wie die Solo- und Duo-Arbeit.",
+      perf_photo_trio:"Foto hinzufügen — Trio",
+      perf_tag_mge:"Programmierung", perf_title_mge:"Muziekgebouw Eindhoven",
+      perf_desc_mge:"Ruben kuratiert die klassische Programmierung des Muziekgebouw Eindhoven.",
+      perf_photo_mge:"Foto hinzufügen — Muziekgebouw Eindhoven",
+      perf_link_mge:"Klassisches Programm ansehen →",
+      press_label:"Presse & Kit", press_title:"In ihren Worten",
+      quote1:"„Hier ein Rezensionszitat einfügen.“", quote2:"„Hier ein zweites Rezensionszitat einfügen.“", quote_source:"— Publikation, Jahr",
+      kit_download:"Download", kit_repertoire_t:"Repertoire", kit_repertoire_d:"Vollständige Liste, PDF",
+      kit_presskit_t:"Pressemappe", kit_presskit_d:"Fotos in hoher Auflösung", kit_bio_d:"Kurz + ausführlich, .docx",
+      footer_label:"Kontakt aufnehmen",
+      footer_heading:"Jedes Konzert beginnt mit einem <span class=\"it\">Gespräch</span>. Lass es uns führen.",
+      foot_location:"Standort", foot_contact:"Kontakt", foot_listen:"Anhören", foot_photography:"Fotografie",
+      footer_note:"Konzept-Website — E-Mail und Termine noch zu ergänzen",
+      mute_off:"Ton aus", mute_on:"Ton an"
+    }
+  };
+  window.__i18n = translations;
+
+  // ---------- Agenda: render dates + auto-hide past events ----------
+  const MONTHS = {
+    en: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    nl: ['Jan','Feb','Mrt','Apr','Mei','Jun','Jul','Aug','Sep','Okt','Nov','Dec'],
+    fr: ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'],
+    de: ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez']
+  };
+  let currentAgendaLang = 'en';
+
+  function renderAgendaDates(lang){
+    currentAgendaLang = lang;
+    const months = MONTHS[lang] || MONTHS.en;
+    document.querySelectorAll('.agenda-row[data-date]').forEach(row => {
+      const iso = row.getAttribute('data-date');
+      const d = new Date(iso + 'T00:00:00');
+      if(isNaN(d)) return;
+      const dateEl = row.querySelector('.date');
+      if(dateEl){
+        dateEl.innerHTML = `<span class="d">${d.getDate()}</span>${months[d.getMonth()]} '${String(d.getFullYear()).slice(2)}`;
+      }
+    });
+  }
+
+  const MAX_VISIBLE_AGENDA = 2;
+  let agendaExpanded = false;
+
+  function filterAgendaByDate(){
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const rows = Array.from(document.querySelectorAll('.agenda-row[data-date]'));
+    const upcoming = [];
+    rows.forEach(row => {
+      const iso = row.getAttribute('data-date');
+      const d = new Date(iso + 'T00:00:00');
+      if(!isNaN(d) && d >= today){
+        upcoming.push({ row, d });
+      } else {
+        row.style.display = 'none';
+      }
+    });
+    upcoming.sort((a, b) => a.d - b.d);
+    upcoming.forEach((item, i) => {
+      const visible = agendaExpanded || i < MAX_VISIBLE_AGENDA;
+      item.row.style.display = visible ? '' : 'none';
+    });
+    const emptyEl = document.getElementById('agendaEmpty');
+    if(emptyEl) emptyEl.style.display = upcoming.length === 0 ? '' : 'none';
+    const toggleEl = document.getElementById('agendaToggle');
+    if(toggleEl){
+      const hasMore = upcoming.length > MAX_VISIBLE_AGENDA;
+      toggleEl.parentElement.style.display = hasMore ? '' : 'none';
+      const lang = document.documentElement.lang || 'en';
+      const dict = (window.__i18n && window.__i18n[lang]) || {};
+      const key = agendaExpanded ? 'agenda_foot_less' : 'agenda_foot';
+      toggleEl.setAttribute('data-i18n', key);
+      if(dict[key]) toggleEl.textContent = dict[key];
+    }
+  }
+
+  const agendaToggle = document.getElementById('agendaToggle');
+  if(agendaToggle){
+    agendaToggle.addEventListener('click', () => {
+      agendaExpanded = !agendaExpanded;
+      filterAgendaByDate();
+    });
+  }
+
+  renderAgendaDates('en');
+  filterAgendaByDate();
+
+  function applyLang(lang){
+    const dict = translations[lang];
+    if(!dict) return;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if(dict[key] !== undefined) el.textContent = dict[key];
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(el => {
+      const key = el.getAttribute('data-i18n-html');
+      if(dict[key] !== undefined) el.innerHTML = dict[key];
+    });
+    document.documentElement.lang = lang;
+    document.querySelectorAll('#langSwitch button').forEach(b => {
+      b.classList.toggle('active', b.dataset.lang === lang);
+    });
+    renderAgendaDates(lang);
+  }
+
+  const langSwitch = document.getElementById('langSwitch');
+  if(langSwitch){
+    langSwitch.addEventListener('click', e => {
+      const btn = e.target.closest('button');
+      if(!btn) return;
+      applyLang(btn.dataset.lang);
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
