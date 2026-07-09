@@ -166,16 +166,6 @@
   .press{ padding:0 5vw 140px; border-top:3px solid var(--black); }
   .press-head{ padding:50px 0 40px; }
   .press-head h2{ font-size:clamp(30px, 4vw, 50px); }
-  .quotes{
-    display:grid;
-    grid-template-columns:repeat(2, 1fr);
-    gap:40px;
-    margin-bottom:70px;
-  }
-  @media (max-width:760px){ .quotes{ grid-template-columns:1fr; } }
-  .quote{ border-left:3px solid var(--red); padding-left:24px; }
-  .quote p{ font-family:'Archivo Black', sans-serif; font-size:19px; line-height:1.4; margin-bottom:14px; }
-  .quote span{ color:var(--muted); font-size:12px; }
   .kit-row{
     display:flex; gap:20px; flex-wrap:wrap;
     border-top:1px solid var(--line); padding-top:40px;
@@ -912,17 +902,6 @@
 <section class="press" id="press">
   <div class="press-head reveal">
     <span class="mono" style="color:var(--red);" data-i18n="press_label">Press &amp; Kit</span>
-    <h2 class="display" data-i18n="press_title">In their words</h2>
-  </div>
-  <div class="quotes">
-    <div class="quote reveal">
-      <p data-i18n="quote1">"Vul hier een recensiecitaat in."</p>
-      <span data-i18n="quote_source">— Publicatie, jaar</span>
-    </div>
-    <div class="quote reveal">
-      <p data-i18n="quote2">"Vul hier een tweede recensiecitaat in."</p>
-      <span data-i18n="quote_source">— Publicatie, jaar</span>
-    </div>
   </div>
   <div class="kit-row">
     <a href="#" class="kit-card reveal">
@@ -1379,8 +1358,7 @@
       perf_tag_academy:"Academy", perf_title_academy:"Experience Klassiek Academy",
       perf_desc_academy:"Founded together with violinist Karen Su, the Academy passes on what Ruben once received from his own teachers — coaching the next generation of musicians in technique, sound and stage presence, alongside the Experience Klassiek concert series.",
       perf_link_academy:"Learn more about Experience Klassiek →",
-      press_label:"Press & Kit", press_title:"In their words",
-      quote1:"\"Add a review quote here.\"", quote2:"\"Add a second review quote here.\"", quote_source:"— Publication, year",
+      press_label:"Press & Kit",
       kit_download:"Download", kit_repertoire_t:"Repertoire", kit_repertoire_d:"Full list, PDF",
       kit_presskit_t:"Press kit", kit_presskit_d:"High-res photos", kit_bio_d:"Short + long, .docx",
       footer_label:"Get in touch",
@@ -1430,8 +1408,7 @@
       perf_tag_academy:"Academie", perf_title_academy:"Experience Klassiek Academy",
       perf_desc_academy:"Samen met violiste Karen Su opgericht: de Academy geeft door wat Ruben ooit van zijn eigen leraren meekreeg — het begeleiden van de volgende generatie musici op het gebied van techniek, klank en podiumpresentatie, naast de concertreeks Experience Klassiek.",
       perf_link_academy:"Meer over Experience Klassiek →",
-      press_label:"Pers & Kit", press_title:"In hun woorden",
-      quote1:"\"Vul hier een recensiecitaat in.\"", quote2:"\"Vul hier een tweede recensiecitaat in.\"", quote_source:"— Publicatie, jaar",
+      press_label:"Pers & Kit",
       kit_download:"Download", kit_repertoire_t:"Repertoire", kit_repertoire_d:"Volledige lijst, PDF",
       kit_presskit_t:"Perskit", kit_presskit_d:"Foto's in hoge resolutie", kit_bio_d:"Kort + lang, .docx",
       footer_label:"Neem contact op",
@@ -1481,8 +1458,7 @@
       perf_tag_academy:"Académie", perf_title_academy:"Experience Klassiek Academy",
       perf_desc_academy:"Fondée avec la violoniste Karen Su, l'Academy transmet ce que Ruben a lui-même reçu de ses professeurs — elle accompagne la nouvelle génération de musiciens sur le plan de la technique, du son et de la présence scénique, aux côtés de la série de concerts Experience Klassiek.",
       perf_link_academy:"En savoir plus sur Experience Klassiek →",
-      press_label:"Presse & Kit", press_title:"Dans leurs mots",
-      quote1:"« Citation de presse à ajouter ici. »", quote2:"« Deuxième citation de presse à ajouter ici. »", quote_source:"— Publication, année",
+      press_label:"Presse & Kit",
       kit_download:"Télécharger", kit_repertoire_t:"Répertoire", kit_repertoire_d:"Liste complète, PDF",
       kit_presskit_t:"Dossier de presse", kit_presskit_d:"Photos haute résolution", kit_bio_d:"Courte + longue, .docx",
       footer_label:"Contactez-moi",
@@ -1532,8 +1508,7 @@
       perf_tag_academy:"Akademie", perf_title_academy:"Experience Klassiek Academy",
       perf_desc_academy:"Gemeinsam mit der Geigerin Karen Su gegründet, gibt die Academy weiter, was Ruben einst von seinen eigenen Lehrern erhielt — sie begleitet die nächste Generation von Musikern in Technik, Klang und Bühnenpräsenz, neben der Konzertreihe Experience Klassiek.",
       perf_link_academy:"Mehr über Experience Klassiek →",
-      press_label:"Presse & Kit", press_title:"In ihren Worten",
-      quote1:"„Hier ein Rezensionszitat einfügen.“", quote2:"„Hier ein zweites Rezensionszitat einfügen.“", quote_source:"— Publikation, Jahr",
+      press_label:"Presse & Kit",
       kit_download:"Download", kit_repertoire_t:"Repertoire", kit_repertoire_d:"Vollständige Liste, PDF",
       kit_presskit_t:"Pressemappe", kit_presskit_d:"Fotos in hoher Auflösung", kit_bio_d:"Kurz + ausführlich, .docx",
       footer_label:"Kontakt aufnehmen",
