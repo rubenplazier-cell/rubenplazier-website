@@ -1183,20 +1183,22 @@
     }
   }
 
-  function pressKey(el, velocity){
+  function pressKey(el, velocity, userPlayed){
     playNote(parseFloat(el.dataset.freq), velocity);
     el.classList.add('active');
     setTimeout(()=> el.classList.remove('active'), 130);
     const semi = parseFloat(el.dataset.semi);
     paintMark(semi);
-    registerPlayedSemi(semi);
+    // only count deliberate presses toward the BACH sequence — ambient/intro auto-play
+    // shouldn't be able to break (or accidentally complete) what the visitor is playing
+    if(userPlayed) registerPlayedSemi(semi);
   }
 
   let isMouseDown = false;
   document.addEventListener('mousedown', ()=> isMouseDown = true);
   document.addEventListener('mouseup', ()=> isMouseDown = false);
-  keysEl.addEventListener('mousedown', e => { if(e.target.classList.contains('key')) pressKey(e.target, 0.9); });
-  keysEl.addEventListener('mouseover', e => { if(isMouseDown && e.target.classList.contains('key')) pressKey(e.target, 0.7); });
+  keysEl.addEventListener('mousedown', e => { if(e.target.classList.contains('key')) pressKey(e.target, 0.9, true); });
+  keysEl.addEventListener('mouseover', e => { if(isMouseDown && e.target.classList.contains('key')) pressKey(e.target, 0.7, true); });
 
   const muteBtn = document.getElementById('muteBtn');
   if(muteBtn){
@@ -1215,7 +1217,7 @@
   keysEl.addEventListener('touchstart', e => {
     for(const t of e.touches){
       const el = document.elementFromPoint(t.clientX, t.clientY);
-      if(el && el.classList.contains('key')) pressKey(el, 0.9);
+      if(el && el.classList.contains('key')) pressKey(el, 0.9, true);
     }
   }, {passive:true});
 
