@@ -338,6 +338,12 @@
   .lightbox-prev:hover{ transform:translateY(-50%) scale(1.06); }
   .lightbox-next{ right:22px; top:50%; transform:translateY(-50%); }
   .lightbox-next:hover{ transform:translateY(-50%) scale(1.06); }
+  .video-frame{
+    width:min(90vw, 1100px);
+    aspect-ratio:16/9;
+    box-shadow:0 40px 100px rgba(0,0,0,0.55);
+  }
+  .video-frame iframe{ width:100%; height:100%; border:0; }
   @media (max-width:700px){
     .lightbox{ padding:20px; }
     .lightbox-btn{ width:38px; height:38px; font-size:15px; }
@@ -545,6 +551,7 @@
     transition: opacity .2s ease;
   }
   .perf-link:hover{ opacity:0.65; }
+  button.perf-link{ background:none; border:none; border-bottom:1px solid var(--red); cursor:pointer; }
 
   /* ---------- Footer ---------- */
   footer{
@@ -659,6 +666,13 @@
   <button class="lightbox-btn lightbox-prev" id="lightboxPrev" aria-label="Previous" type="button">←</button>
   <img class="lightbox-img" id="lightboxImg" src="" alt="">
   <button class="lightbox-btn lightbox-next" id="lightboxNext" aria-label="Next" type="button">→</button>
+</div>
+
+<div class="lightbox" id="videoLightbox" aria-hidden="true">
+  <button class="lightbox-btn lightbox-close" id="videoLightboxClose" aria-label="Close" type="button">✕</button>
+  <div class="video-frame">
+    <iframe id="videoLightboxFrame" src="" title="Chopin — Andante spianato et grande polonaise brillante, Op. 22" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
 </div>
 
 <nav>
@@ -855,6 +869,7 @@
       <span class="tag mono" data-i18n="perf_tag_solo">Solo</span>
       <h3 data-i18n="perf_title_solo">Recitals</h3>
       <p data-i18n="perf_desc_solo">Full-length programmes centred on French repertoire and the Russian pianistic lineage — Debussy, Scriabin, and composers just outside the standard canon.</p>
+      <button type="button" class="perf-link mono" id="listenSoloBtn" data-i18n="perf_listen_solo">Listen — Chopin, Andante spianato et grande polonaise →</button>
     </div>
   </div>
   <div class="perf-row">
@@ -1314,6 +1329,34 @@
       if(e.key === 'ArrowLeft') stepLightbox(-1);
     });
   }
+
+  // ---------- Video lightbox (Solo recital — Chopin) ----------
+  const videoLightbox = document.getElementById('videoLightbox');
+  const videoFrame = document.getElementById('videoLightboxFrame');
+  const listenSoloBtn = document.getElementById('listenSoloBtn');
+  if(videoLightbox && videoFrame && listenSoloBtn){
+    const videoSrc = 'https://www.youtube-nocookie.com/embed/QpWGrZuLZ3A?autoplay=1&rel=0';
+    function openVideoLightbox(){
+      videoFrame.src = videoSrc;
+      videoLightbox.classList.add('active');
+      videoLightbox.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeVideoLightbox(){
+      videoLightbox.classList.remove('active');
+      videoLightbox.setAttribute('aria-hidden', 'true');
+      videoFrame.src = '';
+      document.body.style.overflow = '';
+    }
+    listenSoloBtn.addEventListener('click', openVideoLightbox);
+    const videoClose = document.getElementById('videoLightboxClose');
+    if(videoClose) videoClose.addEventListener('click', closeVideoLightbox);
+    videoLightbox.addEventListener('click', e => { if(e.target === videoLightbox) closeVideoLightbox(); });
+    document.addEventListener('keydown', e => {
+      if(!videoLightbox.classList.contains('active')) return;
+      if(e.key === 'Escape') closeVideoLightbox();
+    });
+  }
 })();
 </script>
 
@@ -1346,6 +1389,7 @@
       performances_title:"Three ways to hear it",
       perf_tag_solo:"Solo", perf_title_solo:"Recitals",
       perf_desc_solo:"Full-length programmes centred on French repertoire and the Russian pianistic lineage — Debussy, Scriabin, and composers just outside the standard canon.",
+      perf_listen_solo:"Listen — Chopin, Andante spianato et grande polonaise →",
       perf_tag_duo:"Duo", perf_title_duo:"With Karen Su",
       perf_desc_duo:"A working partnership built over years of shared repertoire, from sonata literature to newly paired programmes for smaller, more intimate halls.",
       perf_tag_trio:"Trio", perf_title_trio:"With Karen Su &amp; Luc Tooten",
@@ -1396,6 +1440,7 @@
       performances_title:"Drie manieren om te luisteren",
       perf_tag_solo:"Solo", perf_title_solo:"Recitals",
       perf_desc_solo:"Avondvullende programma's rond Frans repertoire en de Russische pianistische traditie — Debussy, Scriabin, en componisten net buiten het gangbare canon.",
+      perf_listen_solo:"Luister — Chopin, Andante spianato et grande polonaise →",
       perf_tag_duo:"Duo", perf_title_duo:"Met Karen Su",
       perf_desc_duo:"Een samenwerking die over jaren is opgebouwd rond gedeeld repertoire, van sonateliteratuur tot nieuw samengestelde programma's voor kleinere, intiemere zalen.",
       perf_tag_trio:"Trio", perf_title_trio:"Met Karen Su &amp; Luc Tooten",
@@ -1446,6 +1491,7 @@
       performances_title:"Trois façons de l'écouter",
       perf_tag_solo:"Solo", perf_title_solo:"Récitals",
       perf_desc_solo:"Programmes solo complets centrés sur le répertoire français et la lignée pianistique russe — Debussy, Scriabine, et des compositeurs juste en marge du canon habituel.",
+      perf_listen_solo:"Écouter — Chopin, Andante spianato et grande polonaise →",
       perf_tag_duo:"Duo", perf_title_duo:"Avec Karen Su",
       perf_desc_duo:"Une collaboration construite au fil des années autour d'un répertoire partagé, de la littérature pour sonate à des programmes inédits pensés pour des salles plus intimes.",
       perf_tag_trio:"Trio", perf_title_trio:"Avec Karen Su &amp; Luc Tooten",
@@ -1496,6 +1542,7 @@
       performances_title:"Drei Wege, ihn zu hören",
       perf_tag_solo:"Solo", perf_title_solo:"Rezitals",
       perf_desc_solo:"Abendfüllende Programme rund um französisches Repertoire und die russische Klaviertradition — Debussy, Skrjabin und Komponisten abseits des gängigen Kanons.",
+      perf_listen_solo:"Anhören — Chopin, Andante spianato et grande polonaise →",
       perf_tag_duo:"Duo", perf_title_duo:"Mit Karen Su",
       perf_desc_duo:"Eine über Jahre gewachsene Partnerschaft rund um gemeinsames Repertoire, von Sonatenliteratur bis zu neu zusammengestellten Programmen für kleinere, intimere Säle.",
       perf_tag_trio:"Trio", perf_title_trio:"Mit Karen Su &amp; Luc Tooten",
