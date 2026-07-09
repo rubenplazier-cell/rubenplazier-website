@@ -578,6 +578,31 @@
     font-size:10px; opacity:0.65;
   }
 
+  .contact-form{ max-width:640px; margin-bottom:70px; }
+  .hp-field{ position:absolute; left:-9999px; }
+  .form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:0 28px; }
+  @media (max-width:600px){ .form-grid{ grid-template-columns:1fr; } }
+  .form-field{ margin-bottom:26px; }
+  .form-field label{
+    display:block; font-size:11px; opacity:0.65; margin-bottom:8px; letter-spacing:0.03em;
+  }
+  .contact-form input, .contact-form textarea{
+    width:100%; background:none; border:none; border-bottom:1px solid rgba(128,128,128,0.4);
+    color:var(--paper); font-family:'Space Grotesk', sans-serif; font-size:16px;
+    padding:8px 2px; border-radius:0; resize:vertical;
+  }
+  .contact-form input::placeholder, .contact-form textarea::placeholder{ color:rgba(128,128,128,0.7); }
+  .contact-form input:focus, .contact-form textarea:focus{ outline:none; border-bottom-color:var(--red); }
+  .form-submit{
+    border:2px solid var(--paper); color:var(--paper); background:none;
+    padding:12px 28px; font-size:11px; cursor:pointer; margin-top:6px;
+    transition: background .2s ease, color .2s ease;
+  }
+  .form-submit:hover{ background:var(--paper); color:var(--black); }
+  .form-submit:disabled{ opacity:0.5; cursor:default; }
+  .form-status{ margin-top:16px; font-size:12px; min-height:1em; opacity:0.85; }
+  .form-status.err{ color:var(--red); }
+
   /* ---------- Animations ---------- */
   .progress-bar{
     position:fixed; top:0; left:0; height:3px; width:0%;
@@ -921,17 +946,36 @@
 <footer id="contact">
   <span class="mono" style="opacity:0.65;" data-i18n="footer_label">Get in touch</span>
   <h2 class="display reveal" style="margin-top:20px;" data-i18n-html="footer_heading">Every concert starts with a <span class="it">conversation</span>. Let's have it.</h2>
+
+  <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="contact-form reveal" id="contactForm">
+    <input type="hidden" name="form-name" value="contact">
+    <p class="hp-field"><label>Don't fill this out: <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+    <div class="form-grid">
+      <div class="form-field">
+        <label for="cf-name" class="mono" data-i18n="form_name_label">Name</label>
+        <input type="text" id="cf-name" name="name" required autocomplete="name">
+      </div>
+      <div class="form-field">
+        <label for="cf-email" class="mono" data-i18n="form_email_label">Email</label>
+        <input type="email" id="cf-email" name="email" required autocomplete="email">
+      </div>
+    </div>
+    <div class="form-field">
+      <label for="cf-message" class="mono" data-i18n="form_message_label">Message</label>
+      <textarea id="cf-message" name="message" rows="5" required></textarea>
+    </div>
+    <button type="submit" class="form-submit mono" data-i18n="form_submit">Send message</button>
+    <p class="form-status mono" id="formStatus" aria-live="polite"></p>
+  </form>
+
   <div class="foot-meta reveal">
-    <div><div class="l mono" data-i18n="foot_location">Location</div><div class="v">Netherlands / Antwerp</div></div>
-    <div><div class="l mono" data-i18n="foot_contact">Contact</div><a class="v" href="https://www.rubenplazier.com/contact" target="_blank" rel="noopener">rubenplazier.com/contact</a></div>
+    <div><div class="l mono" data-i18n="foot_location">Location</div><div class="v">Netherlands / Belgium</div></div>
     <div><div class="l mono">Instagram</div><a class="v" href="https://www.instagram.com/ruben_plazier/" target="_blank" rel="noopener">@ruben_plazier</a></div>
     <div><div class="l mono">Facebook</div><a class="v" href="https://www.facebook.com/experienceklassiek/" target="_blank" rel="noopener">Experience Klassiek</a></div>
     <div><div class="l mono">Spotify</div><a class="v" href="https://open.spotify.com/artist/5CVAcnl9bhO8wsvssNo37z" target="_blank" rel="noopener" data-i18n="foot_listen">Listen</a></div>
-    <div><div class="l mono" data-i18n="foot_photography">Photography</div><div class="v">Björn Comhaire</div></div>
   </div>
   <div class="copyright mono">
     <span>© 2026 Ruben Plazier</span>
-    <span data-i18n="footer_note">Concept site — vul e-mailadres en agenda nog aan</span>
   </div>
 </footer>
 
@@ -1341,8 +1385,11 @@
       kit_presskit_t:"Press kit", kit_presskit_d:"High-res photos", kit_bio_d:"Short + long, .docx",
       footer_label:"Get in touch",
       footer_heading:"Every concert starts with a <span class=\"it\">conversation</span>. Let's have it.",
-      foot_location:"Location", foot_contact:"Contact", foot_listen:"Listen", foot_photography:"Photography",
-      footer_note:"Concept site — add email and agenda",
+      foot_location:"Location", foot_listen:"Listen",
+      form_name_label:"Name", form_email_label:"Email", form_message_label:"Message",
+      form_submit:"Send message", form_sending:"Sending…",
+      form_success:"Thank you — your message has been sent.",
+      form_error:"Something went wrong — please try again or email directly.",
       mute_off:"Sound off", mute_on:"Sound on"
     },
     nl: {
@@ -1389,8 +1436,11 @@
       kit_presskit_t:"Perskit", kit_presskit_d:"Foto's in hoge resolutie", kit_bio_d:"Kort + lang, .docx",
       footer_label:"Neem contact op",
       footer_heading:"Elk concert begint met een <span class=\"it\">gesprek</span>. Laten we het voeren.",
-      foot_location:"Locatie", foot_contact:"Contact", foot_listen:"Luister", foot_photography:"Fotografie",
-      footer_note:"Concept site — vul e-mailadres en agenda nog aan",
+      foot_location:"Locatie", foot_listen:"Luister",
+      form_name_label:"Naam", form_email_label:"E-mail", form_message_label:"Bericht",
+      form_submit:"Verstuur bericht", form_sending:"Versturen…",
+      form_success:"Bedankt — je bericht is verstuurd.",
+      form_error:"Er ging iets mis — probeer het opnieuw of mail rechtstreeks.",
       mute_off:"Geluid uit", mute_on:"Geluid aan"
     },
     fr: {
@@ -1437,8 +1487,11 @@
       kit_presskit_t:"Dossier de presse", kit_presskit_d:"Photos haute résolution", kit_bio_d:"Courte + longue, .docx",
       footer_label:"Contactez-moi",
       footer_heading:"Chaque concert commence par une <span class=\"it\">conversation</span>. Ayons-la.",
-      foot_location:"Localisation", foot_contact:"Contact", foot_listen:"Écouter", foot_photography:"Photographie",
-      footer_note:"Site concept — e-mail et agenda à compléter",
+      foot_location:"Localisation", foot_listen:"Écouter",
+      form_name_label:"Nom", form_email_label:"E-mail", form_message_label:"Message",
+      form_submit:"Envoyer le message", form_sending:"Envoi…",
+      form_success:"Merci — votre message a bien été envoyé.",
+      form_error:"Une erreur s'est produite — veuillez réessayer ou écrire directement par e-mail.",
       mute_off:"Son coupé", mute_on:"Son activé"
     },
     de: {
@@ -1485,8 +1538,11 @@
       kit_presskit_t:"Pressemappe", kit_presskit_d:"Fotos in hoher Auflösung", kit_bio_d:"Kurz + ausführlich, .docx",
       footer_label:"Kontakt aufnehmen",
       footer_heading:"Jedes Konzert beginnt mit einem <span class=\"it\">Gespräch</span>. Lass es uns führen.",
-      foot_location:"Standort", foot_contact:"Kontakt", foot_listen:"Anhören", foot_photography:"Fotografie",
-      footer_note:"Konzept-Website — E-Mail und Termine noch zu ergänzen",
+      foot_location:"Standort", foot_listen:"Anhören",
+      form_name_label:"Name", form_email_label:"E-Mail", form_message_label:"Nachricht",
+      form_submit:"Nachricht senden", form_sending:"Wird gesendet…",
+      form_success:"Vielen Dank — Ihre Nachricht wurde gesendet.",
+      form_error:"Etwas ist schiefgelaufen — bitte versuchen Sie es erneut oder schreiben Sie direkt eine E-Mail.",
       mute_off:"Ton aus", mute_on:"Ton an"
     }
   };
@@ -1586,6 +1642,35 @@
       const btn = e.target.closest('button');
       if(!btn) return;
       applyLang(btn.dataset.lang);
+    });
+  }
+
+  // ---------- Contact form ----------
+  const contactForm = document.getElementById('contactForm');
+  if(contactForm){
+    contactForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const btn = contactForm.querySelector('.form-submit');
+      const statusEl = document.getElementById('formStatus');
+      const lang = document.documentElement.lang || 'en';
+      const dict = (window.__i18n && window.__i18n[lang]) || {};
+      btn.disabled = true;
+      statusEl.classList.remove('err');
+      statusEl.textContent = dict.form_sending || 'Sending…';
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(new FormData(contactForm)).toString()
+      }).then(res => {
+        if(!res.ok) throw new Error('Form submission failed');
+        contactForm.reset();
+        statusEl.textContent = dict.form_success || 'Thank you — your message has been sent.';
+      }).catch(() => {
+        statusEl.classList.add('err');
+        statusEl.textContent = dict.form_error || 'Something went wrong — please try again or email directly.';
+      }).finally(() => {
+        btn.disabled = false;
+      });
     });
   }
 })();
