@@ -406,9 +406,16 @@
     position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
     color:var(--muted); font-size:13px; pointer-events:none; transition:opacity .4s ease;
   }
-  .keys{ display:flex; margin-top:-3px; border:3px solid var(--black); border-top:none; height:64px; }
+  .keys{ position:relative; display:flex; margin-top:-3px; border:3px solid var(--black); border-top:none; height:64px; }
   .key{ flex:1; border-right:3px solid var(--black); cursor:pointer; transition: background .1s ease, transform .06s ease; background:var(--paper); }
-  .key:last-child{ border-right:none; }
+  .key:nth-last-child(2){ border-right:none; }
+  .key.black{
+    position:absolute; top:0; flex:none;
+    width:3.4%; height:58%;
+    background:#141414; border:none; z-index:2;
+  }
+  .key.black:hover{ filter:brightness(1.35); }
+  .key.black.active{ background:var(--red); }
   .key:nth-child(3n+1).active{ background:var(--red); }
   .key:nth-child(3n+2).active{ background:var(--blue); }
   .key:nth-child(3n).active{ background:var(--yellow); }
@@ -1076,8 +1083,16 @@
     const k = document.createElement('div');
     k.className = 'key';
     k.dataset.freq = freqFor(semi);
+    k.dataset.semi = semi;
     keysEl.appendChild(k);
   });
+  // one black key (Bb4) so the B-A-C-H motif can actually be played, not just typed
+  const blackKey = document.createElement('div');
+  blackKey.className = 'key black';
+  blackKey.dataset.freq = freqFor(1);
+  blackKey.dataset.semi = 1;
+  blackKey.style.left = `calc(${offsets.indexOf(0)} / ${offsets.length} * 100% - 1.6%)`;
+  keysEl.appendChild(blackKey);
 
   const canvas = document.getElementById('canvas');
   const hint = document.getElementById('hint');
@@ -1119,8 +1134,9 @@
     playNote(parseFloat(el.dataset.freq), velocity);
     el.classList.add('active');
     setTimeout(()=> el.classList.remove('active'), 130);
-    const idx = Array.from(keysEl.children).indexOf(el);
-    paintMark(offsets[idx] !== undefined ? offsets[idx] : 0);
+    const semi = parseFloat(el.dataset.semi);
+    paintMark(semi);
+    registerPlayedSemi(semi);
   }
 
   let isMouseDown = false;
@@ -1217,10 +1233,24 @@
   }
 
   const PIANO_KEY_MAP = { a:0, s:1, d:2, f:3, g:4, h:5, j:6, k:7, l:8 };
+  const BACH_SEMIS = [1, 0, 3, 2]; // B(flat) – A – C – H (= B natural): the classic BACH motif
   let bachBuffer = '';
+  let playedBuffer = [];
+
+  function celebrateBach(){
+    showToast('♪ B – A – C – H');
+    spawnNote(lastPointerX, lastPointerY);
+  }
+  function registerPlayedSemi(semi){
+    playedBuffer.push(semi);
+    if(playedBuffer.length > 4) playedBuffer.shift();
+    if(playedBuffer.length === 4 && playedBuffer.every((s, i) => s === BACH_SEMIS[i])){
+      celebrateBach();
+      playedBuffer = [];
+    }
+  }
   function playBachMotif(){
-    const semis = [1, 0, 3, 2]; // B(flat) – A – C – H (= B natural): the classic BACH motif
-    semis.forEach((semi, i) => {
+    BACH_SEMIS.forEach((semi, i) => {
       setTimeout(() => {
         playNote(freqFor(semi), 0.95);
         spawnNote(lastPointerX + (i - 1.5) * 22, lastPointerY);
@@ -1247,6 +1277,7 @@
       playNote(freqFor(offsets[idx]), 0.85);
       spawnNote(lastPointerX, lastPointerY);
       paintMark(offsets[idx]);
+      registerPlayedSemi(offsets[idx]);
       const keyEl = keysEl.children[idx];
       if(keyEl){
         keyEl.classList.add('active');
