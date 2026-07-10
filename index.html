@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ruben Plazier — Pianist</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
@@ -306,16 +307,16 @@
     transition:transform .5s cubic-bezier(.22,1.7,.4,1) .1s;
   }
   .hr-red{
-    position:absolute; left:20%; right:0; bottom:0; height:64%;
+    position:absolute; left:58%; right:0; bottom:0; height:64%;
     background:#e3392b;
     clip-path:polygon(12% 0, 100% 0, 100% 100%, 0 100%);
     transform:translateX(105%);
     transition:transform .55s cubic-bezier(.16,.84,.44,1);
     display:flex; align-items:flex-end;
-    padding:15% 34px 34px;
+    padding:15% 24px 28px;
   }
   .hr-keys{
-    position:absolute; left:20%; right:0; bottom:64%;
+    position:absolute; left:58%; right:0; bottom:64%;
     display:flex; height:16px; z-index:2;
   }
   .hr-keys span{
@@ -338,7 +339,7 @@
   .hr-eyebrow{
     color:var(--onphoto); opacity:0.75; font-size:10px; letter-spacing:0.16em; text-transform:uppercase;
   }
-  .hr-quote{ color:var(--onphoto); font-size:13.5px; line-height:1.6; max-width:220px; }
+  .hr-quote{ color:var(--onphoto); font-size:12px; line-height:1.55; max-width:170px; }
 
   .hero-photo:hover .hr-yellow, .hero-photo:active .hr-yellow{ transform:translateY(0); }
   .hero-photo:hover .hr-blue, .hero-photo:active .hr-blue{ transform:translateX(0); }
@@ -385,17 +386,6 @@
     transition: transform .6s cubic-bezier(.16,.84,.44,1);
   }
   .gallery-item:hover img{ transform: scale(1.045); }
-  .gallery-credit{
-    position:absolute; left:0; right:0; bottom:0;
-    padding:14px 14px 10px;
-    background:linear-gradient(to top, rgba(13,13,13,0.65), transparent);
-    color:var(--onphoto);
-    font-size:10px;
-    letter-spacing:0.12em;
-    text-transform:uppercase;
-    opacity:0.9;
-    pointer-events:none;
-  }
 
   /* ---------- Lightbox ---------- */
   .lightbox{
@@ -412,6 +402,13 @@
     object-fit:contain;
     box-shadow:0 40px 100px rgba(0,0,0,0.55);
   }
+  .lightbox-credit{
+    position:absolute; bottom:16px; left:50%; transform:translateX(-50%);
+    color:var(--onphoto); font-size:9.5px; letter-spacing:0.1em;
+    text-transform:uppercase; opacity:0; transition:opacity .3s ease;
+    pointer-events:none;
+  }
+  .lightbox-credit.show{ opacity:0.55; }
   .lightbox-btn{
     position:absolute;
     background:rgba(255,255,255,0.04);
@@ -608,13 +605,28 @@
     position:relative;
     border:1px solid var(--rule);
     background:#0d0d0d;
+    cursor:pointer;
+    overflow:hidden;
   }
-  .mentor-video video{
+  .mentor-video img{
     width:100%; display:block;
     aspect-ratio:16/9;
     object-fit:cover;
     background:#000;
+    transition: transform .5s cubic-bezier(.16,.84,.44,1), filter .3s ease;
   }
+  .mentor-video:hover img{ transform:scale(1.04); filter:brightness(0.75); }
+  .play-badge{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:60px; height:60px; border-radius:50%;
+    background:rgba(248,246,240,0.92);
+    color:#0d0d0d;
+    display:flex; align-items:center; justify-content:center;
+    font-size:20px; padding-left:4px;
+    transition: transform .3s cubic-bezier(.2,1.6,.4,1), background .2s ease;
+    pointer-events:none;
+  }
+  .mentor-video:hover .play-badge{ transform:translate(-50%,-50%) scale(1.15); background:var(--paper); }
   .mentor-caption{
     display:block;
     padding:10px 2px 0;
@@ -632,24 +644,14 @@
   }
   .polaroid{
     background:#f5f2ea;
-    padding:9px 9px 26px;
+    padding:9px;
     box-shadow:0 12px 26px rgba(13,13,13,0.2);
-    cursor:default;
+    cursor:pointer;
     transition: transform .35s cubic-bezier(.2,.8,.3,1.3), box-shadow .35s ease;
   }
   .polaroid img{
     width:132px; height:132px;
     object-fit:cover; display:block;
-  }
-  .polaroid .cap{
-    display:block;
-    margin-top:9px;
-    font-family:'JetBrains Mono', monospace;
-    font-size:9px;
-    letter-spacing:0.09em;
-    text-transform:uppercase;
-    color:#6b6864;
-    text-align:center;
   }
   .polaroid.p1{ transform:rotate(-7deg) translateY(8px); }
   .polaroid.p2{ transform:rotate(4deg) translateY(-6px); }
@@ -715,8 +717,18 @@
   .foot-meta .l{ font-size:10px; opacity:0.6; margin-bottom:4px; }
   .foot-meta .v{ font-size:16px; }
   .foot-meta a.v:hover{ color:var(--red); }
+  .foot-keys{
+    display:flex; gap:5px; height:44px; margin-top:56px;
+    will-change:transform;
+  }
+  .foot-keys span{
+    flex:1; background:var(--paper); border-radius:2px 2px 0 0;
+  }
+  .foot-keys span:nth-child(3n+2){ background:#1d3ea8; }
+  .foot-keys span:nth-child(3n){ background:#e3392b; }
+  @media (max-width:700px){ .foot-keys{ height:28px; gap:3px; } }
   .copyright{
-    margin-top:80px; padding-top:20px; border-top:1px solid rgba(248,246,240,0.25);
+    margin-top:40px; padding-top:20px; border-top:1px solid rgba(248,246,240,0.25);
     display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
     font-size:10px; opacity:0.65;
   }
@@ -820,14 +832,23 @@
   <button class="lightbox-btn lightbox-close" id="lightboxClose" aria-label="Close" type="button">✕</button>
   <button class="lightbox-btn lightbox-prev" id="lightboxPrev" aria-label="Previous" type="button">←</button>
   <img class="lightbox-img" id="lightboxImg" src="" alt="">
+  <span class="lightbox-credit mono" id="lightboxCredit"></span>
   <button class="lightbox-btn lightbox-next" id="lightboxNext" aria-label="Next" type="button">→</button>
 </div>
 
 <div class="lightbox" id="videoLightbox" aria-hidden="true">
   <button class="lightbox-btn lightbox-close" id="videoLightboxClose" aria-label="Close" type="button">✕</button>
   <div class="video-frame">
-    <iframe id="videoLightboxFrame" src="" title="Chopin — Andante spianato et grande polonaise brillante, Op. 22" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <iframe id="videoLightboxFrame" src="" title="Performance video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
   </div>
+</div>
+
+<div class="lightbox" id="mentorLightbox" aria-hidden="true">
+  <button class="lightbox-btn lightbox-close" id="mentorLightboxClose" aria-label="Close" type="button">✕</button>
+  <button class="lightbox-btn lightbox-prev" id="mentorLightboxPrev" aria-label="Previous" type="button">←</button>
+  <img class="lightbox-img" id="mentorLightboxImg" src="" alt="">
+  <video class="lightbox-img" id="mentorLightboxVideo" controls playsinline style="display:none"></video>
+  <button class="lightbox-btn lightbox-next" id="mentorLightboxNext" aria-label="Next" type="button">→</button>
 </div>
 
 <div class="bach-modal" id="bachModal" aria-hidden="true">
@@ -930,8 +951,7 @@
       <img src="https://images.squarespace-cdn.com/content/v1/6522b651e0f4c622871fa2b9/33d515df-af0a-4321-a4a1-ed98e887afce/081224-0459+Large.jpeg" alt="Solo" loading="lazy">
     </div>
     <div class="gallery-item reveal">
-      <img src="https://images.squarespace-cdn.com/content/v1/6522b651e0f4c622871fa2b9/68b707cb-1189-4055-9111-80fa345ad337/20250207_KarenSu_RubenPlazier_BjornComhaire_20_of_67.jpg" alt="Duo — Karen Su" loading="lazy">
-      <span class="gallery-credit mono" data-i18n="photo_credit">Foto — Björn Comhaire</span>
+      <img src="https://images.squarespace-cdn.com/content/v1/6522b651e0f4c622871fa2b9/68b707cb-1189-4055-9111-80fa345ad337/20250207_KarenSu_RubenPlazier_BjornComhaire_20_of_67.jpg" alt="Duo — Karen Su" loading="lazy" data-credit="Foto — Björn Comhaire">
     </div>
     <div class="gallery-item reveal">
       <img src="https://images.squarespace-cdn.com/content/v1/6522b651e0f4c622871fa2b9/bb059d72-0563-417e-a98e-bc4028bb05ea/081224-0475+Large.jpeg" alt="Experience Klassiek" loading="lazy">
@@ -940,12 +960,10 @@
       <img src="https://images.squarespace-cdn.com/content/v1/6522b651e0f4c622871fa2b9/f1161429-6914-41bf-b2d0-4a2042e262d4/IMG_3876.jpeg" alt="Studio" loading="lazy">
     </div>
     <div class="gallery-item reveal">
-      <img src="assets/ek-hall-wide.jpg" alt="Experience Klassiek, concert hall" loading="lazy">
-      <span class="gallery-credit mono">Foto — Foppe Schut</span>
+      <img src="assets/ek-hall-wide.jpg" alt="Experience Klassiek, concert hall" loading="lazy" data-credit="Foto — Foppe Schut">
     </div>
     <div class="gallery-item reveal">
-      <img src="assets/ek-ovation.jpg" alt="Experience Klassiek, standing ovation" loading="lazy">
-      <span class="gallery-credit mono">Foto — Foppe Schut</span>
+      <img src="assets/ek-ovation.jpg" alt="Experience Klassiek, standing ovation" loading="lazy" data-credit="Foto — Foppe Schut">
     </div>
     <div class="gallery-item reveal">
       <img src="assets/gallery-karen-su-violin.jpg" alt="Karen Su, violin" loading="lazy">
@@ -961,6 +979,15 @@
     </div>
     <div class="gallery-item reveal">
       <img src="assets/gallery-trio-bow.jpg" alt="Trio, standing ovation" loading="lazy">
+    </div>
+    <div class="gallery-item reveal">
+      <img src="assets/trio-wide-hall.jpg" alt="Trio recital, concert hall" loading="lazy">
+    </div>
+    <div class="gallery-item reveal">
+      <img src="assets/trio-cathedral.jpg" alt="Trio recital, cathedral venue" loading="lazy">
+    </div>
+    <div class="gallery-item reveal">
+      <img src="assets/duo-audience-view.jpg" alt="Duo recital, view from the audience" loading="lazy">
     </div>
   </div>
 </section>
@@ -1048,24 +1075,20 @@
         </div>
       </div>
       <div class="mentor-media">
-        <div class="mentor-video">
-          <video controls playsinline preload="metadata" poster="assets/pommier-lesson.jpg">
-            <source src="assets/pommier-adieux.mp4" type="video/mp4">
-          </video>
+        <div class="mentor-video mentor-lbitem" data-mtype="video" data-video-src="assets/pommier-adieux.mp4">
+          <img src="assets/pommier-video-still.jpg" alt="Beethoven, Les Adieux — with Pommier, 2021">
+          <span class="play-badge" aria-hidden="true">▶</span>
           <span class="mentor-caption" data-i18n="mentor_video_caption">Beethoven, Les Adieux — with Pommier, 2021</span>
         </div>
         <div class="mentor-photos">
-          <div class="polaroid p1">
+          <div class="polaroid p1 mentor-lbitem" data-mtype="image">
             <img src="assets/pommier-lesson.jpg" alt="Lesson with Jean-Bernard Pommier">
-            <span class="cap" data-i18n="mentor_photo_cap1">Béziers, lesson</span>
           </div>
-          <div class="polaroid p2">
+          <div class="polaroid p2 mentor-lbitem" data-mtype="image">
             <img src="assets/pommier-duo.jpg" alt="Performing alongside Jean-Bernard Pommier">
-            <span class="cap" data-i18n="mentor_photo_cap2">At the piano</span>
           </div>
-          <div class="polaroid p3">
+          <div class="polaroid p3 mentor-lbitem" data-mtype="image">
             <img src="assets/pommier-lunch.jpg" alt="With Jean-Bernard Pommier">
-            <span class="cap" data-i18n="mentor_photo_cap3">Off duty</span>
           </div>
         </div>
       </div>
@@ -1074,36 +1097,36 @@
 </section>
 
 <section class="performances" id="performances">
-  <h2 class="display reveal" data-i18n="performances_title">Three ways to hear it</h2>
+  <h2 class="display reveal" data-i18n="performances_title">Five ways to hear it</h2>
   <div class="perf-row">
     <div class="ph perf-photo reveal" style="background-image:url('https://images.squarespace-cdn.com/content/v1/6522b651e0f4c622871fa2b9/a0eb9c02-daf6-4ae9-b0e3-e52c44df40ee/081224-0166+Large.jpeg');background-size:cover;background-position:center;"></div>
     <div class="perf-copy reveal">
       <span class="tag mono" data-i18n="perf_tag_solo">Solo</span>
       <h3 data-i18n="perf_title_solo">Recitals</h3>
       <p data-i18n="perf_desc_solo">Full-length programmes centred on French repertoire and the Russian pianistic lineage — Debussy, Scriabin, and composers just outside the standard canon.</p>
-      <button type="button" class="perf-link mono" id="listenSoloBtn" data-i18n="perf_listen_solo">Listen — Chopin, Andante spianato et grande polonaise →</button>
+      <button type="button" class="perf-link mono listen-btn" data-video-id="QpWGrZuLZ3A" data-i18n="perf_listen_solo">Listen — Chopin, Andante spianato et grande polonaise →</button>
     </div>
   </div>
   <div class="perf-row">
-    <div class="ph perf-photo reveal" style="background-image:url('assets/rudolfinum-duo.jpg');background-size:cover;background-position:center;"></div>
+    <div class="ph perf-photo reveal" style="background-image:url('assets/duo-rudolfinum.jpg');background-size:cover;background-position:center;"></div>
     <div class="perf-copy reveal">
       <span class="tag mono" data-i18n="perf_tag_duo">Duo</span>
       <h3 data-i18n="perf_title_duo">With Karen Su</h3>
       <p data-i18n="perf_desc_duo">A working partnership built over years of shared repertoire, from sonata literature to newly paired programmes for smaller, more intimate halls.</p>
+      <button type="button" class="perf-link mono listen-btn" data-video-id="wtS4KAqYQ3k" data-i18n="perf_listen_duo">Listen — Poulenc, Violin Sonata →</button>
     </div>
   </div>
   <div class="perf-row">
-    <div class="ph perf-photo reveal" style="background-image:url('assets/trio-photo.jpg');background-size:cover;background-position:center;"></div>
+    <div class="ph perf-photo reveal" style="background-image:url('assets/trio-overhead.jpg');background-size:cover;background-position:center;"></div>
     <div class="perf-copy reveal">
       <span class="tag mono" data-i18n="perf_tag_trio">Trio</span>
       <h3 data-i18n="perf_title_trio">With Karen Su &amp; Luc Tooten</h3>
       <p data-i18n="perf_desc_trio">A trio programme built around Karen Su on violin and Luc Tooten on cello, pairing chamber repertoire with the same attention to line and story as the solo and duo work.</p>
+      <button type="button" class="perf-link mono listen-btn" data-video-id="qyjDNVudzis" data-i18n="perf_listen_trio">Listen — Grieg, Andante con moto →</button>
     </div>
   </div>
   <div class="perf-row">
-    <div class="ph perf-photo reveal" style="background-image:url('assets/mge-grote-zaal.jpg');background-size:cover;background-position:center;">
-      <span class="ph-tag" style="opacity:0.7;">Foto — Bram Saeys</span>
-    </div>
+    <div class="ph perf-photo reveal" style="background-image:url('assets/mge-grote-zaal.jpg');background-size:cover;background-position:center;"></div>
     <div class="perf-copy reveal">
       <span class="tag mono" data-i18n="perf_tag_mge">Programming</span>
       <h3 data-i18n="perf_title_mge">Muziekgebouw Eindhoven</h3>
@@ -1117,7 +1140,7 @@
       <span class="tag mono" data-i18n="perf_tag_academy">Academy</span>
       <h3 data-i18n="perf_title_academy">Experience Klassiek Academy</h3>
       <p data-i18n="perf_desc_academy">Founded together with violinist Karen Su, the Academy passes on what Ruben once received from his own teachers — coaching the next generation of musicians in technique, sound and stage presence, alongside the Experience Klassiek concert series.</p>
-      <a href="https://www.facebook.com/experienceklassiek/" target="_blank" rel="noopener" class="perf-link mono" data-i18n="perf_link_academy">Learn more about Experience Klassiek →</a>
+      <a href="https://www.violinist.com/blog/hkurzbauer/20255/30393/" target="_blank" rel="noopener" class="perf-link mono" data-i18n="perf_link_academy">Read about the Academy on Violinist.com →</a>
     </div>
   </div>
 </section>
@@ -1173,8 +1196,11 @@
   <div class="foot-meta reveal">
     <div><div class="l mono" data-i18n="foot_location">Location</div><div class="v">Netherlands / Belgium</div></div>
     <div><div class="l mono">Instagram</div><a class="v" href="https://www.instagram.com/ruben_plazier/" target="_blank" rel="noopener">@ruben_plazier</a></div>
-    <div><div class="l mono">Facebook</div><a class="v" href="https://www.facebook.com/experienceklassiek/" target="_blank" rel="noopener">Experience Klassiek</a></div>
-    <div><div class="l mono">Spotify</div><a class="v" href="https://open.spotify.com/artist/5CVAcnl9bhO8wsvssNo37z" target="_blank" rel="noopener" data-i18n="foot_listen">Listen</a></div>
+  </div>
+  <div class="foot-keys" id="footKeys" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span><span></span>
   </div>
   <div class="copyright mono">
     <span>© 2026 Ruben Plazier</span>
@@ -1460,7 +1486,39 @@
         setTimeout(() => keyEl.classList.remove('active'), 130);
       }
     }
+
+    // ---- Konami code: ↑↑↓↓←→←→BA — a full-keyboard encore run ----
+    konamiBuffer.push(k);
+    konamiBuffer = konamiBuffer.slice(-KONAMI.length);
+    if(konamiBuffer.length === KONAMI.length && konamiBuffer.every((v, i) => v === KONAMI[i])){
+      triggerEncore();
+      konamiBuffer = [];
+    }
   });
+
+  const KONAMI = ['arrowup','arrowup','arrowdown','arrowdown','arrowleft','arrowright','arrowleft','arrowright','b','a'];
+  let konamiBuffer = [];
+  function triggerEncore(){
+    Array.from(keysEl.children).forEach((keyEl, i) => {
+      setTimeout(() => {
+        playNote(parseFloat(keyEl.dataset.freq), 0.7);
+        paintMark(parseFloat(keyEl.dataset.semi));
+        keyEl.classList.add('active');
+        setTimeout(() => keyEl.classList.remove('active'), 130);
+      }, i * 45);
+    });
+    for(let i = 0; i < 30; i++){
+      setTimeout(() => {
+        spawnNote(Math.random() * window.innerWidth, window.innerHeight * (0.25 + Math.random() * 0.5));
+      }, i * 30);
+    }
+    const originalTitle = document.title;
+    document.title = '🎉 Encore! — ' + originalTitle;
+    setTimeout(() => { document.title = originalTitle; }, 4000);
+  }
+
+  console.log('%c🎹 B–A–C–H', 'font-size:24px; font-weight:900; color:#e3392b;');
+  console.log('%cCurious? Type "bach" anywhere on this page, or play B♭–A–C–B on the piano below. There might be more hiding in here too...', 'font-size:12px; color:#6b6864;');
 })();
 </script>
 
@@ -1561,6 +1619,28 @@
       });
     });
   }
+  // ---------- Footer piano-key parallax ----------
+  const footKeys = document.getElementById('footKeys');
+  if(footKeys && !prefersReduced){
+    const keySpans = Array.from(footKeys.children);
+    let footTicking = false;
+    function updateFootParallax(){
+      const rect = footKeys.getBoundingClientRect();
+      const progress = 1 - Math.min(1, Math.max(0, rect.top / window.innerHeight));
+      keySpans.forEach((k, i) => {
+        const wave = Math.sin(progress * Math.PI * 2.4 + i * 0.45) * 12 * progress;
+        k.style.transform = `translateY(${-wave}px)`;
+      });
+      footTicking = false;
+    }
+    document.addEventListener('scroll', () => {
+      if(!footTicking){
+        requestAnimationFrame(updateFootParallax);
+        footTicking = true;
+      }
+    }, {passive:true});
+    updateFootParallax();
+  }
   // ---------- Bio toggle ----------
   const bioToggle = document.getElementById('bioToggle');
   if(bioToggle){
@@ -1625,15 +1705,27 @@
   const galleryImgs = Array.from(document.querySelectorAll('#galleryGrid .gallery-item img'));
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxCredit = document.getElementById('lightboxCredit');
   if(lightbox && lightboxImg && galleryImgs.length){
     const urls = galleryImgs.map(img => img.getAttribute('src'));
     const alts = galleryImgs.map(img => img.getAttribute('alt') || '');
+    const credits = galleryImgs.map(img => img.getAttribute('data-credit') || '');
     let currentIndex = 0;
 
+    function showCredit(i){
+      if(!lightboxCredit) return;
+      if(credits[i]){
+        lightboxCredit.textContent = credits[i];
+        lightboxCredit.classList.add('show');
+      } else {
+        lightboxCredit.classList.remove('show');
+      }
+    }
     function openLightbox(i){
       currentIndex = i;
       lightboxImg.src = urls[i];
       lightboxImg.alt = alts[i];
+      showCredit(i);
       lightbox.classList.add('active');
       lightbox.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
@@ -1647,6 +1739,7 @@
       currentIndex = (currentIndex + delta + urls.length) % urls.length;
       lightboxImg.src = urls[currentIndex];
       lightboxImg.alt = alts[currentIndex];
+      showCredit(currentIndex);
     }
 
     galleryImgs.forEach((img, i) => {
@@ -1667,14 +1760,78 @@
     });
   }
 
-  // ---------- Video lightbox (Solo recital — Chopin) ----------
+  // ---------- Mentor lightbox (video still + 3 polaroids) ----------
+  const mentorItems = Array.from(document.querySelectorAll('.mentor-lbitem'));
+  const mentorLightbox = document.getElementById('mentorLightbox');
+  const mentorImg = document.getElementById('mentorLightboxImg');
+  const mentorVideo = document.getElementById('mentorLightboxVideo');
+  if(mentorLightbox && mentorImg && mentorVideo && mentorItems.length){
+    const mData = mentorItems.map(el => {
+      const img = el.querySelector('img');
+      return {
+        type: el.dataset.mtype,
+        videoSrc: el.dataset.videoSrc || '',
+        poster: img ? img.getAttribute('src') : '',
+        alt: img ? img.getAttribute('alt') : ''
+      };
+    });
+    let mIndex = 0;
+    function showMentorItem(i){
+      const item = mData[i];
+      if(item.type === 'video'){
+        mentorVideo.setAttribute('poster', item.poster);
+        mentorVideo.src = item.videoSrc;
+        mentorVideo.style.display = '';
+        mentorImg.style.display = 'none';
+      } else {
+        mentorImg.src = item.poster;
+        mentorImg.alt = item.alt;
+        mentorImg.style.display = '';
+        mentorVideo.pause();
+        mentorVideo.removeAttribute('src');
+        mentorVideo.style.display = 'none';
+      }
+    }
+    function openMentorLightbox(i){
+      mIndex = i;
+      showMentorItem(i);
+      mentorLightbox.classList.add('active');
+      mentorLightbox.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMentorLightbox(){
+      mentorLightbox.classList.remove('active');
+      mentorLightbox.setAttribute('aria-hidden', 'true');
+      mentorVideo.pause();
+      document.body.style.overflow = '';
+    }
+    function stepMentorLightbox(delta){
+      mIndex = (mIndex + delta + mData.length) % mData.length;
+      showMentorItem(mIndex);
+    }
+    mentorItems.forEach((el, i) => el.addEventListener('click', () => openMentorLightbox(i)));
+    const mClose = document.getElementById('mentorLightboxClose');
+    const mPrev = document.getElementById('mentorLightboxPrev');
+    const mNext = document.getElementById('mentorLightboxNext');
+    if(mClose) mClose.addEventListener('click', closeMentorLightbox);
+    if(mPrev) mPrev.addEventListener('click', () => stepMentorLightbox(-1));
+    if(mNext) mNext.addEventListener('click', () => stepMentorLightbox(1));
+    mentorLightbox.addEventListener('click', e => { if(e.target === mentorLightbox) closeMentorLightbox(); });
+    document.addEventListener('keydown', e => {
+      if(!mentorLightbox.classList.contains('active')) return;
+      if(e.key === 'Escape') closeMentorLightbox();
+      if(e.key === 'ArrowRight') stepMentorLightbox(1);
+      if(e.key === 'ArrowLeft') stepMentorLightbox(-1);
+    });
+  }
+
+  // ---------- Video lightbox (Solo/Duo/Trio "Listen" links) ----------
   const videoLightbox = document.getElementById('videoLightbox');
   const videoFrame = document.getElementById('videoLightboxFrame');
-  const listenSoloBtn = document.getElementById('listenSoloBtn');
-  if(videoLightbox && videoFrame && listenSoloBtn){
-    const videoSrc = 'https://www.youtube-nocookie.com/embed/QpWGrZuLZ3A?autoplay=1&rel=0';
-    function openVideoLightbox(){
-      videoFrame.src = videoSrc;
+  const listenBtns = document.querySelectorAll('.listen-btn');
+  if(videoLightbox && videoFrame && listenBtns.length){
+    function openVideoLightbox(videoId){
+      videoFrame.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`;
       videoLightbox.classList.add('active');
       videoLightbox.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
@@ -1685,7 +1842,7 @@
       videoFrame.src = '';
       document.body.style.overflow = '';
     }
-    listenSoloBtn.addEventListener('click', openVideoLightbox);
+    listenBtns.forEach(btn => btn.addEventListener('click', () => openVideoLightbox(btn.dataset.videoId)));
     const videoClose = document.getElementById('videoLightboxClose');
     if(videoClose) videoClose.addEventListener('click', closeVideoLightbox);
     videoLightbox.addEventListener('click', e => { if(e.target === videoLightbox) closeVideoLightbox(); });
@@ -1705,7 +1862,7 @@
       hero_kicker:"Pianist — Antwerp / Paris",
       hero_p:"Born in Delft, musically formed in Paris in the tradition of the Russian piano school. Solo recitals, a duo with violinist Karen Su, and the concert series Experience Klassiek.",
       video_fallback:"Watch on YouTube ↗",
-      gallery_label:"Gallery", gallery_title:"On stage, off stage", photo_credit:"Photo — Björn Comhaire",
+      gallery_label:"Gallery", gallery_title:"On stage, off stage",
       agenda_label:"Agenda", agenda_title:"Upcoming",
       agenda_row1:"Fill in programme — e.g. Debussy & Scriabin",
       agenda_row2:"Duo with Karen Su — fill in programme",
@@ -1721,12 +1878,13 @@
       mentor_label:"Mentor",
       mentor_body:"<p>Ruben met Jean-Bernard Pommier through his first teacher, Stéphane De May, at the Rotterdam Conservatory. What began as a few lessons in Béziers grew into one of the defining relationships of his musical life: years of travel, first to the south of France, later weekly to Paris, for lessons that stretched into long conversations over breakfast, dinner, and late into the night. Pommier demanded a willingness to start over, again and again, and gave in return something that reached far beyond technique: a way of listening, of thinking about sound, that he himself had inherited from generations of great pedagogues within the Russian piano school. That inheritance now sits at the core of how Ruben plays, and teaches.</p>",
       mentor_video_caption:"Beethoven, Les Adieux — with Pommier, 2021",
-      mentor_photo_cap1:"Béziers, lesson", mentor_photo_cap2:"At the piano", mentor_photo_cap3:"Off duty",
       studio_label:"Composed live — or play it yourself", studio_sub:"Composition No. 01", studio_hint:"click the keys below — or type A S D F G H J K L",
-      performances_title:"Three ways to hear it",
+      performances_title:"Five ways to hear it",
       perf_tag_solo:"Solo", perf_title_solo:"Recitals",
       perf_desc_solo:"Full-length programmes centred on French repertoire and the Russian pianistic lineage — Debussy, Scriabin, and composers just outside the standard canon.",
       perf_listen_solo:"Listen — Chopin, Andante spianato et grande polonaise →",
+      perf_listen_duo:"Listen — Poulenc, Violin Sonata →",
+      perf_listen_trio:"Listen — Grieg, Andante con moto →",
       perf_tag_duo:"Duo", perf_title_duo:"With Karen Su",
       perf_desc_duo:"A working partnership built over years of shared repertoire, from sonata literature to newly paired programmes for smaller, more intimate halls.",
       perf_tag_trio:"Trio", perf_title_trio:"With Karen Su &amp; Luc Tooten",
@@ -1738,13 +1896,13 @@
       perf_link_mge:"View the classical programme →",
       perf_tag_academy:"Academy", perf_title_academy:"Experience Klassiek Academy",
       perf_desc_academy:"Founded together with violinist Karen Su, the Academy passes on what Ruben once received from his own teachers — coaching the next generation of musicians in technique, sound and stage presence, alongside the Experience Klassiek concert series.",
-      perf_link_academy:"Learn more about Experience Klassiek →",
+      perf_link_academy:"Read about the Academy on Violinist.com →",
       press_label:"Press & Kit",
       kit_download:"Download", kit_repertoire_t:"Repertoire", kit_repertoire_d:"Full list, PDF",
       kit_presskit_t:"Press kit", kit_presskit_d:"High-res photos", kit_bio_d:"Short + long, .docx",
       footer_label:"Get in touch",
       footer_heading:"Every concert starts with a <span class=\"it\">conversation</span>. Let's have it.",
-      foot_location:"Location", foot_listen:"Listen",
+      foot_location:"Location",
       form_name_label:"Name", form_email_label:"Email", form_message_label:"Message",
       form_submit:"Send message", form_sending:"Sending…",
       form_success:"Thank you — your message has been sent.",
@@ -1756,7 +1914,7 @@
       hero_kicker:"Pianist — Antwerpen / Parijs",
       hero_p:"Geboren in Delft, muzikaal gevormd in Parijs binnen de traditie van de Russische pianoschool. Solorecitals, een duo met violiste Karen Su, en de concertreeks Experience Klassiek.",
       video_fallback:"Bekijk op YouTube ↗",
-      gallery_label:"Foto's", gallery_title:"Op het podium, erbuiten", photo_credit:"Foto — Björn Comhaire",
+      gallery_label:"Foto's", gallery_title:"Op het podium, erbuiten",
       agenda_label:"Agenda", agenda_title:"Binnenkort",
       agenda_row1:"Vul programma in — bv. Debussy & Scriabin",
       agenda_row2:"Duo met Karen Su — vul programma in",
@@ -1772,12 +1930,13 @@
       mentor_label:"Leermeester",
       mentor_body:"<p>Ruben ontmoette Jean-Bernard Pommier via zijn eerste leraar, Stéphane De May, aan het Rotterdams Conservatorium. Wat begon als een paar lessen in Béziers groeide uit tot een van de bepalende relaties in zijn muzikale leven: jaren van reizen, eerst naar het zuiden van Frankrijk, later wekelijks naar Parijs, voor lessen die zich uitstrekten tot lange gesprekken aan het ontbijt, het avondeten en tot diep in de nacht. Pommier eiste bereidheid om telkens opnieuw te beginnen, en gaf in ruil daarvoor iets dat verder reikte dan techniek: een manier van luisteren, van denken over klank, die hij op zijn beurt had geërfd van generaties grote pedagogen binnen de Russische pianoschool. Die erfenis vormt vandaag de kern van hoe Ruben speelt en lesgeeft.</p>",
       mentor_video_caption:"Beethoven, Les Adieux — met Pommier, 2021",
-      mentor_photo_cap1:"Béziers, les", mentor_photo_cap2:"Aan de vleugel", mentor_photo_cap3:"Buiten de lesuren",
       studio_label:"Speelt zichzelf — of speel zelf", studio_sub:"Compositie nr. 01", studio_hint:"klik op de toetsen hieronder — of typ A S D F G H J K L",
-      performances_title:"Drie manieren om te luisteren",
+      performances_title:"Vijf manieren om te luisteren",
       perf_tag_solo:"Solo", perf_title_solo:"Recitals",
       perf_desc_solo:"Avondvullende programma's rond Frans repertoire en de Russische pianistische traditie — Debussy, Scriabin, en componisten net buiten het gangbare canon.",
       perf_listen_solo:"Luister — Chopin, Andante spianato et grande polonaise →",
+      perf_listen_duo:"Luister — Poulenc, Vioolsonate →",
+      perf_listen_trio:"Luister — Grieg, Andante con moto →",
       perf_tag_duo:"Duo", perf_title_duo:"Met Karen Su",
       perf_desc_duo:"Een samenwerking die over jaren is opgebouwd rond gedeeld repertoire, van sonateliteratuur tot nieuw samengestelde programma's voor kleinere, intiemere zalen.",
       perf_tag_trio:"Trio", perf_title_trio:"Met Karen Su &amp; Luc Tooten",
@@ -1789,13 +1948,13 @@
       perf_link_mge:"Bekijk het klassieke programma →",
       perf_tag_academy:"Academie", perf_title_academy:"Experience Klassiek Academy",
       perf_desc_academy:"Samen met violiste Karen Su opgericht: de Academy geeft door wat Ruben ooit van zijn eigen leraren meekreeg — het begeleiden van de volgende generatie musici op het gebied van techniek, klank en podiumpresentatie, naast de concertreeks Experience Klassiek.",
-      perf_link_academy:"Meer over Experience Klassiek →",
+      perf_link_academy:"Lees over de Academy op Violinist.com →",
       press_label:"Pers & Kit",
       kit_download:"Download", kit_repertoire_t:"Repertoire", kit_repertoire_d:"Volledige lijst, PDF",
       kit_presskit_t:"Perskit", kit_presskit_d:"Foto's in hoge resolutie", kit_bio_d:"Kort + lang, .docx",
       footer_label:"Neem contact op",
       footer_heading:"Elk concert begint met een <span class=\"it\">gesprek</span>. Laten we het voeren.",
-      foot_location:"Locatie", foot_listen:"Luister",
+      foot_location:"Locatie",
       form_name_label:"Naam", form_email_label:"E-mail", form_message_label:"Bericht",
       form_submit:"Verstuur bericht", form_sending:"Versturen…",
       form_success:"Bedankt — je bericht is verstuurd.",
@@ -1807,7 +1966,7 @@
       hero_kicker:"Pianiste — Anvers / Paris",
       hero_p:"Né à Delft, formé musicalement à Paris dans la tradition de l'école pianistique russe. Récitals en solo, un duo avec la violoniste Karen Su, et la série de concerts Experience Klassiek.",
       video_fallback:"Voir sur YouTube ↗",
-      gallery_label:"Galerie", gallery_title:"Sur scène, en coulisses", photo_credit:"Photo — Björn Comhaire",
+      gallery_label:"Galerie", gallery_title:"Sur scène, en coulisses",
       agenda_label:"Agenda", agenda_title:"À venir",
       agenda_row1:"À compléter — ex. Debussy & Scriabine",
       agenda_row2:"Duo avec Karen Su — programme à compléter",
@@ -1823,12 +1982,13 @@
       mentor_label:"Maître",
       mentor_body:"<p>Ruben a rencontré Jean-Bernard Pommier par l'intermédiaire de son premier professeur, Stéphane De May, au Conservatoire de Rotterdam. Ce qui n'était au départ que quelques leçons à Béziers est devenu l'une des relations fondatrices de sa vie musicale : des années de déplacements, d'abord vers le sud de la France, puis chaque semaine vers Paris, pour des leçons qui se prolongeaient en longues conversations au petit-déjeuner, au dîner, et tard dans la nuit. Pommier exigeait une volonté de tout recommencer, sans cesse, et offrait en retour bien plus que la technique : une manière d'écouter, de penser le son, héritée lui-même de générations de grands pédagogues de l'école pianistique russe. Cet héritage est aujourd'hui au cœur du jeu de Ruben, et de son enseignement.</p>",
       mentor_video_caption:"Beethoven, Les Adieux — avec Pommier, 2021",
-      mentor_photo_cap1:"Béziers, leçon", mentor_photo_cap2:"Au piano", mentor_photo_cap3:"En dehors des cours",
       studio_label:"Composé en direct — ou jouez vous-même", studio_sub:"Composition n° 01", studio_hint:"cliquez sur les touches ci-dessous — ou tapez A S D F G H J K L",
-      performances_title:"Trois façons de l'écouter",
+      performances_title:"Cinq façons de l'écouter",
       perf_tag_solo:"Solo", perf_title_solo:"Récitals",
       perf_desc_solo:"Programmes solo complets centrés sur le répertoire français et la lignée pianistique russe — Debussy, Scriabine, et des compositeurs juste en marge du canon habituel.",
       perf_listen_solo:"Écouter — Chopin, Andante spianato et grande polonaise →",
+      perf_listen_duo:"Écouter — Poulenc, Sonate pour violon →",
+      perf_listen_trio:"Écouter — Grieg, Andante con moto →",
       perf_tag_duo:"Duo", perf_title_duo:"Avec Karen Su",
       perf_desc_duo:"Une collaboration construite au fil des années autour d'un répertoire partagé, de la littérature pour sonate à des programmes inédits pensés pour des salles plus intimes.",
       perf_tag_trio:"Trio", perf_title_trio:"Avec Karen Su &amp; Luc Tooten",
@@ -1840,13 +2000,13 @@
       perf_link_mge:"Voir le programme classique →",
       perf_tag_academy:"Académie", perf_title_academy:"Experience Klassiek Academy",
       perf_desc_academy:"Fondée avec la violoniste Karen Su, l'Academy transmet ce que Ruben a lui-même reçu de ses professeurs — elle accompagne la nouvelle génération de musiciens sur le plan de la technique, du son et de la présence scénique, aux côtés de la série de concerts Experience Klassiek.",
-      perf_link_academy:"En savoir plus sur Experience Klassiek →",
+      perf_link_academy:"Lire l'article sur Violinist.com →",
       press_label:"Presse & Kit",
       kit_download:"Télécharger", kit_repertoire_t:"Répertoire", kit_repertoire_d:"Liste complète, PDF",
       kit_presskit_t:"Dossier de presse", kit_presskit_d:"Photos haute résolution", kit_bio_d:"Courte + longue, .docx",
       footer_label:"Contactez-moi",
       footer_heading:"Chaque concert commence par une <span class=\"it\">conversation</span>. Ayons-la.",
-      foot_location:"Localisation", foot_listen:"Écouter",
+      foot_location:"Localisation",
       form_name_label:"Nom", form_email_label:"E-mail", form_message_label:"Message",
       form_submit:"Envoyer le message", form_sending:"Envoi…",
       form_success:"Merci — votre message a bien été envoyé.",
@@ -1858,7 +2018,7 @@
       hero_kicker:"Pianist — Antwerpen / Paris",
       hero_p:"Geboren in Delft, musikalisch geprägt in Paris in der Tradition der russischen Klavierschule. Solo-Rezitals, ein Duo mit der Geigerin Karen Su, und die Konzertreihe Experience Klassiek.",
       video_fallback:"Auf YouTube ansehen ↗",
-      gallery_label:"Galerie", gallery_title:"Auf der Bühne, dahinter", photo_credit:"Foto — Björn Comhaire",
+      gallery_label:"Galerie", gallery_title:"Auf der Bühne, dahinter",
       agenda_label:"Termine", agenda_title:"Demnächst",
       agenda_row1:"Programm einfügen — z. B. Debussy & Skrjabin",
       agenda_row2:"Duo mit Karen Su — Programm einfügen",
@@ -1874,12 +2034,13 @@
       mentor_label:"Lehrer",
       mentor_body:"<p>Ruben lernte Jean-Bernard Pommier über seinen ersten Lehrer, Stéphane De May, am Konservatorium Rotterdam kennen. Was mit wenigen Unterrichtsstunden in Béziers begann, wuchs zu einer der prägendsten Beziehungen seines musikalischen Lebens heran: Jahre des Reisens, zunächst in den Süden Frankreichs, später wöchentlich nach Paris, für Unterrichtsstunden, die sich zu langen Gesprächen beim Frühstück, beim Abendessen und bis tief in die Nacht ausdehnten. Pommier verlangte die Bereitschaft, immer wieder von vorn zu beginnen, und gab dafür etwas zurück, das weit über Technik hinausging: eine Art des Hörens, des Denkens über Klang, die er selbst von Generationen großer Pädagogen der russischen Klavierschule geerbt hatte. Dieses Erbe steht heute im Zentrum von Rubens Spiel und seinem Unterrichten.</p>",
       mentor_video_caption:"Beethoven, Les Adieux — mit Pommier, 2021",
-      mentor_photo_cap1:"Béziers, Unterricht", mentor_photo_cap2:"Am Klavier", mentor_photo_cap3:"Abseits des Unterrichts",
       studio_label:"Spielt sich selbst — oder spiel es selbst", studio_sub:"Komposition Nr. 01", studio_hint:"auf die Tasten unten klicken — oder A S D F G H J K L tippen",
-      performances_title:"Drei Wege, ihn zu hören",
+      performances_title:"Fünf Wege, ihn zu hören",
       perf_tag_solo:"Solo", perf_title_solo:"Rezitals",
       perf_desc_solo:"Abendfüllende Programme rund um französisches Repertoire und die russische Klaviertradition — Debussy, Skrjabin und Komponisten abseits des gängigen Kanons.",
       perf_listen_solo:"Anhören — Chopin, Andante spianato et grande polonaise →",
+      perf_listen_duo:"Anhören — Poulenc, Violinsonate →",
+      perf_listen_trio:"Anhören — Grieg, Andante con moto →",
       perf_tag_duo:"Duo", perf_title_duo:"Mit Karen Su",
       perf_desc_duo:"Eine über Jahre gewachsene Partnerschaft rund um gemeinsames Repertoire, von Sonatenliteratur bis zu neu zusammengestellten Programmen für kleinere, intimere Säle.",
       perf_tag_trio:"Trio", perf_title_trio:"Mit Karen Su &amp; Luc Tooten",
@@ -1891,13 +2052,13 @@
       perf_link_mge:"Klassisches Programm ansehen →",
       perf_tag_academy:"Akademie", perf_title_academy:"Experience Klassiek Academy",
       perf_desc_academy:"Gemeinsam mit der Geigerin Karen Su gegründet, gibt die Academy weiter, was Ruben einst von seinen eigenen Lehrern erhielt — sie begleitet die nächste Generation von Musikern in Technik, Klang und Bühnenpräsenz, neben der Konzertreihe Experience Klassiek.",
-      perf_link_academy:"Mehr über Experience Klassiek →",
+      perf_link_academy:"Artikel auf Violinist.com lesen →",
       press_label:"Presse & Kit",
       kit_download:"Download", kit_repertoire_t:"Repertoire", kit_repertoire_d:"Vollständige Liste, PDF",
       kit_presskit_t:"Pressemappe", kit_presskit_d:"Fotos in hoher Auflösung", kit_bio_d:"Kurz + ausführlich, .docx",
       footer_label:"Kontakt aufnehmen",
       footer_heading:"Jedes Konzert beginnt mit einem <span class=\"it\">Gespräch</span>. Lass es uns führen.",
-      foot_location:"Standort", foot_listen:"Anhören",
+      foot_location:"Standort",
       form_name_label:"Name", form_email_label:"E-Mail", form_message_label:"Nachricht",
       form_submit:"Nachricht senden", form_sending:"Wird gesendet…",
       form_success:"Vielen Dank — Ihre Nachricht wurde gesendet.",
