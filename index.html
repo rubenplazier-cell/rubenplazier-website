@@ -3,8 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ruben Plazier — Pianist</title>
+<title>Ruben Plazier — Concert Pianist</title>
+<meta name="description" content="Ruben Plazier, concert pianist trained in the Russian piano school tradition — solo recitals, a duo with violinist Karen Su, and the Experience Klassiek concert series.">
+<link rel="canonical" href="https://rubenplazier.com/">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ruben Plazier">
+<meta property="og:title" content="Ruben Plazier — Concert Pianist">
+<meta property="og:description" content="Concert pianist trained in the Russian piano school tradition — solo recitals, a duo with violinist Karen Su, and the Experience Klassiek concert series.">
+<meta property="og:url" content="https://rubenplazier.com/">
+<meta property="og:image" content="https://rubenplazier.com/assets/solo-steinway.jpg">
+<meta property="og:image:width" content="1800">
+<meta property="og:image:height" content="1200">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="nl_NL">
+<meta property="og:locale:alternate" content="fr_FR">
+<meta property="og:locale:alternate" content="de_DE">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Ruben Plazier — Concert Pianist">
+<meta name="twitter:description" content="Concert pianist trained in the Russian piano school tradition — solo recitals, a duo with violinist Karen Su, and the Experience Klassiek concert series.">
+<meta name="twitter:image" content="https://rubenplazier.com/assets/solo-steinway.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Ruben Plazier",
+  "url": "https://rubenplazier.com/",
+  "image": "https://rubenplazier.com/assets/ruben-portrait.jpg",
+  "jobTitle": "Concert Pianist",
+  "birthPlace": "Delft, Netherlands",
+  "nationality": "Dutch",
+  "sameAs": [
+    "https://www.instagram.com/ruben_plazier/",
+    "https://open.spotify.com/artist/5CVAcnl9bhO8wsvssNo37z",
+    "https://www.violinist.com/blog/hkurzbauer/20255/30393/"
+  ],
+  "alumniOf": {
+    "@type": "CollegeOrUniversity",
+    "name": "Rotterdam Conservatory"
+  }
+}
+</script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
@@ -2140,6 +2182,32 @@
       toggleEl.setAttribute('data-i18n', key);
       if(dict[key]) toggleEl.textContent = dict[key];
     }
+    updateEventStructuredData(upcoming);
+  }
+
+  // Keeps MusicEvent structured data in sync with the agenda rows automatically —
+  // only upcoming events are included, so it never goes stale as concerts pass.
+  function updateEventStructuredData(upcoming){
+    let script = document.getElementById('eventStructuredData');
+    if(!script){
+      script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.id = 'eventStructuredData';
+      document.head.appendChild(script);
+    }
+    const events = upcoming.map(({ row, d }) => ({
+      '@context': 'https://schema.org',
+      '@type': 'MusicEvent',
+      name: row.querySelector('.program')?.textContent.trim() || 'Concert',
+      startDate: row.getAttribute('data-date'),
+      location: {
+        '@type': 'Place',
+        name: row.querySelector('.venue')?.textContent.trim() || ''
+      },
+      performer: { '@type': 'Person', name: 'Ruben Plazier' },
+      url: 'https://rubenplazier.com/#agenda'
+    }));
+    script.textContent = JSON.stringify(events);
   }
 
   const agendaToggle = document.getElementById('agendaToggle');
