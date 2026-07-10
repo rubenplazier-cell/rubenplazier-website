@@ -810,6 +810,7 @@
     transform:translateY(105%);
     opacity:0;
     animation: letter-up .7s cubic-bezier(.2,.8,.2,1) forwards;
+    transition: transform .25s cubic-bezier(.2,.8,.3,1.2), color .2s ease;
   }
   @keyframes letter-up{
     to{ transform:translateY(0); opacity:1; }
@@ -964,9 +965,6 @@
     </div>
     <div class="gallery-item reveal">
       <img src="assets/ek-ovation.jpg" alt="Experience Klassiek, standing ovation" loading="lazy" data-credit="Foto — Foppe Schut">
-    </div>
-    <div class="gallery-item reveal">
-      <img src="assets/gallery-karen-su-violin.jpg" alt="Karen Su, violin" loading="lazy">
     </div>
     <div class="gallery-item reveal">
       <img src="assets/gallery-academy-student.jpg" alt="Experience Klassiek Academy, student recital" loading="lazy">
@@ -1545,6 +1543,29 @@
     heroTitle.appendChild(buildWord('RUBEN', 0.1));
     heroTitle.appendChild(document.createElement('br'));
     heroTitle.appendChild(buildWord('PLAZIER', 0.35));
+
+    // letters clip on entrance (overflow:hidden) — free them up afterwards so the
+    // hover wave below has room to lift letters without getting clipped
+    setTimeout(() => {
+      heroTitle.querySelectorAll('.letters').forEach(el => { el.style.overflow = 'visible'; });
+    }, 1400);
+
+    if(matchMedia('(hover:hover)').matches){
+      const waveColors = ['#e3392b', '#1d3ea8', '#f2c230'];
+      const heroLetterSpans = () => Array.from(heroTitle.querySelectorAll('.letters span'));
+      heroTitle.addEventListener('mousemove', e => {
+        heroLetterSpans().forEach((s, i) => {
+          const r = s.getBoundingClientRect();
+          const dist = Math.hypot(e.clientX - (r.left + r.width/2), e.clientY - (r.top + r.height/2));
+          const influence = Math.max(0, 1 - dist / 110);
+          s.style.transform = `translateY(${-influence * 18}px) scale(${1 + influence * 0.25})`;
+          s.style.color = influence > 0.12 ? waveColors[i % waveColors.length] : '';
+        });
+      });
+      heroTitle.addEventListener('mouseleave', () => {
+        heroLetterSpans().forEach(s => { s.style.transform = ''; s.style.color = ''; });
+      });
+    }
   }
 
   // ---------- Scroll progress bar ----------
