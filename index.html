@@ -406,28 +406,38 @@
   }
   .gallery-head h2{ font-size:clamp(30px, 4vw, 50px); }
   .grid{
-    columns: 5 180px;
-    column-gap: 14px;
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    grid-auto-rows: 10px;
+    grid-auto-flow: dense;
+    gap: 14px;
     padding-bottom:60px;
   }
   @media (max-width:760px){
-    .grid{ columns: 3 110px; column-gap:10px; }
+    .grid{ grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); grid-auto-rows:6px; gap:10px; }
   }
   .gallery-item{
     position:relative;
-    break-inside: avoid;
-    margin-bottom: 14px;
     overflow:hidden;
     cursor:pointer;
     background:var(--line);
   }
-  @media (max-width:760px){ .gallery-item{ margin-bottom:10px; } }
+  .gallery-item.featured{ grid-column: span 2; }
   .gallery-item img{
     width:100%;
+    height:100%;
     display:block;
+    object-fit:cover;
     transition: transform .6s cubic-bezier(.16,.84,.44,1);
   }
   .gallery-item:hover img{ transform: scale(1.045); }
+  .gallery-item.reveal{
+    opacity:1;
+    transform:none;
+    clip-path: inset(0 0 100% 0);
+    transition: clip-path 1s cubic-bezier(.16,.84,.44,1);
+  }
+  .gallery-item.reveal.in{ clip-path: inset(0 0 0% 0); }
 
   /* ---------- Lightbox ---------- */
   .lightbox{
@@ -1005,7 +1015,7 @@
     <div class="gallery-item reveal">
       <img src="assets/ek-hall-wide.jpg" alt="Experience Klassiek, concert hall" loading="lazy" data-credit="Foto — Foppe Schut">
     </div>
-    <div class="gallery-item reveal">
+    <div class="gallery-item reveal featured">
       <img src="assets/ek-ovation.jpg" alt="Experience Klassiek, standing ovation" loading="lazy" data-credit="Foto — Foppe Schut">
     </div>
     <div class="gallery-item reveal">
@@ -1014,7 +1024,7 @@
     <div class="gallery-item reveal">
       <img src="assets/trio-wide-hall.jpg" alt="Trio recital, concert hall" loading="lazy">
     </div>
-    <div class="gallery-item reveal">
+    <div class="gallery-item reveal featured">
       <img src="assets/trio-cathedral.jpg" alt="Trio recital, cathedral venue" loading="lazy">
     </div>
     <div class="gallery-item reveal">
@@ -1757,6 +1767,50 @@
       setTimeout(() => lightsOverlay.classList.remove('active'), prefersReduced ? 0 : 320);
     });
   }
+
+  // ---------- Gallery masonry grid ----------
+  // CSS Grid packs items densely, but row-height must match each image's real
+  // (uncropped) aspect ratio — computed here per item, including featured/wide tiles.
+  (function initGalleryMasonry(){
+    const grid = document.getElementById('galleryGrid');
+    if(!grid) return;
+    const items = Array.from(grid.querySelectorAll('.gallery-item'));
+
+    function resizeItem(item){
+      const img = item.querySelector('img');
+      if(!img || !img.naturalWidth) return;
+      const styles = getComputedStyle(grid);
+      const rowUnit = parseFloat(styles.getPropertyValue('grid-auto-rows')) || 10;
+      const gap = parseFloat(styles.getPropertyValue('row-gap') || styles.getPropertyValue('gap')) || 14;
+      // measure the item's WIDTH (set purely by the grid's column track, unaffected by
+      // row-span) then derive height from the image's intrinsic ratio — reading the
+      // image's rendered height directly would be circular, since it's height:100% of
+      // this same item.
+      const width = item.getBoundingClientRect().width;
+      if(!width) return;
+      const aspectHeight = width * (img.naturalHeight / img.naturalWidth);
+      const span = Math.ceil((aspectHeight + gap) / (rowUnit + gap));
+      item.style.gridRowEnd = `span ${span}`;
+    }
+    function resizeAll(){ items.forEach(resizeItem); }
+
+    items.forEach(item => {
+      const img = item.querySelector('img');
+      if(!img) return;
+      if(img.complete && img.naturalWidth){
+        resizeItem(item);
+      } else {
+        img.addEventListener('load', () => resizeItem(item));
+      }
+    });
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(resizeAll, 150);
+    });
+    window.addEventListener('load', () => setTimeout(resizeAll, 300));
+  })();
 
   // ---------- Gallery lightbox ----------
   const galleryImgs = Array.from(document.querySelectorAll('#galleryGrid .gallery-item img'));
