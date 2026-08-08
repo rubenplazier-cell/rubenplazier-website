@@ -819,6 +819,7 @@
   .form-submit:hover::before{ transform:translateX(0); }
   .form-submit:disabled{ opacity:0.5; cursor:default; }
   .form-status{ margin-top:16px; font-size:12px; min-height:1em; opacity:0.85; }
+  .form-captcha{ margin-bottom:22px; min-height:78px; }
   .form-status.err{ color:var(--red); }
 
   /* ---------- Animations ---------- */
@@ -1217,7 +1218,7 @@
   <span class="mono" style="opacity:0.65;" data-i18n="footer_label">Get in touch</span>
   <h2 class="display reveal" style="margin-top:20px;" data-i18n-html="footer_heading">Every concert starts with a <span class="it">conversation</span>. Let's have it.</h2>
 
-  <form name="contact" method="POST" action="/" data-netlify="true" netlify-honeypot="bot-field" class="contact-form reveal" id="contactForm">
+  <form name="contact" method="POST" action="/" data-netlify="true" data-netlify-recaptcha="true" netlify-honeypot="bot-field" class="contact-form reveal" id="contactForm">
     <input type="hidden" name="form-name" value="contact">
     <p class="hp-field"><label>Don't fill this out: <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
     <div class="form-grid">
@@ -1234,6 +1235,7 @@
       <label for="cf-message" class="mono" data-i18n="form_message_label">Message</label>
       <textarea id="cf-message" name="message" rows="5" required></textarea>
     </div>
+    <div class="form-captcha" data-netlify-recaptcha="true"></div>
     <button type="submit" class="form-submit mono" data-i18n="form_submit">Send message</button>
     <p class="form-status mono" id="formStatus" aria-live="polite"></p>
   </form>
@@ -2019,6 +2021,7 @@
       form_submit:"Send message", form_sending:"Sending…",
       form_success:"Thank you — your message has been sent.",
       form_error:"Something went wrong — please try again or email directly.",
+      form_captcha:"Please confirm you are not a robot.",
       mute_off:"Sound off", mute_on:"Sound on"
     },
     nl: {
@@ -2071,6 +2074,7 @@
       form_submit:"Verstuur bericht", form_sending:"Versturen…",
       form_success:"Bedankt — je bericht is verstuurd.",
       form_error:"Er ging iets mis — probeer het opnieuw of mail rechtstreeks.",
+      form_captcha:"Bevestig even dat je geen robot bent.",
       mute_off:"Geluid uit", mute_on:"Geluid aan"
     },
     fr: {
@@ -2123,6 +2127,7 @@
       form_submit:"Envoyer le message", form_sending:"Envoi…",
       form_success:"Merci — votre message a bien été envoyé.",
       form_error:"Une erreur s'est produite — veuillez réessayer ou écrire directement par e-mail.",
+      form_captcha:"Veuillez confirmer que vous n'êtes pas un robot.",
       mute_off:"Son coupé", mute_on:"Son activé"
     },
     de: {
@@ -2175,6 +2180,7 @@
       form_submit:"Nachricht senden", form_sending:"Wird gesendet…",
       form_success:"Vielen Dank — Ihre Nachricht wurde gesendet.",
       form_error:"Etwas ist schiefgelaufen — bitte versuchen Sie es erneut oder schreiben Sie direkt eine E-Mail.",
+      form_captcha:"Bitte bestätigen Sie, dass Sie kein Roboter sind.",
       mute_off:"Ton aus", mute_on:"Ton an"
     }
   };
@@ -2312,16 +2318,26 @@
       const statusEl = document.getElementById('formStatus');
       const lang = document.documentElement.lang || 'en';
       const dict = (window.__i18n && window.__i18n[lang]) || {};
+      const formData = new FormData(contactForm);
+      // Netlify's injected reCAPTCHA widget adds a g-recaptcha-response field inside
+      // the form; block submission until the visitor has completed it
+      const captchaField = contactForm.querySelector('[name="g-recaptcha-response"]');
+      if(captchaField && !formData.get('g-recaptcha-response')){
+        statusEl.classList.add('err');
+        statusEl.textContent = dict.form_captcha || 'Please confirm you are not a robot.';
+        return;
+      }
       btn.disabled = true;
       statusEl.classList.remove('err');
       statusEl.textContent = dict.form_sending || 'Sending…';
       fetch('/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(new FormData(contactForm)).toString()
+        body: new URLSearchParams(formData).toString()
       }).then(res => {
         if(!res.ok) throw new Error('Form submission failed');
         contactForm.reset();
+        if(window.grecaptcha) grecaptcha.reset();
         statusEl.textContent = dict.form_success || 'Thank you — your message has been sent.';
       }).catch(() => {
         statusEl.classList.add('err');
