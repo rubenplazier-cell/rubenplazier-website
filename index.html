@@ -196,6 +196,13 @@
   }
   .agenda-row .cta:hover{ color:var(--paper); }
   .agenda-row .cta:hover::before{ transform:translateX(0); }
+  .agenda-row.agenda-breda{
+    box-shadow:-8px 0 0 var(--yellow);
+  }
+  .agenda-row.agenda-breda .venue::before{
+    content:''; display:inline-block; width:8px; height:8px;
+    background:var(--yellow); margin-right:8px;
+  }
   .agenda-empty{
     padding:40px 0;
     color:var(--muted);
@@ -1050,6 +1057,12 @@
       <div class="venue">Middelburg</div>
       <a href="#contact" class="cta mono" data-i18n="agenda_tickets">Tickets</a>
     </div>
+    <div class="agenda-row agenda-breda reveal" data-date="2026-10-16" data-type="breda">
+      <div class="date"></div>
+      <div class="program">Anne Sophie &amp; Leonard van Lier</div>
+      <div class="venue">Waalse Kerk Breda</div>
+      <a href="#contact" class="cta mono" data-i18n="agenda_tickets">Tickets</a>
+    </div>
     <div class="agenda-row reveal" data-date="2026-11-08">
       <div class="date"></div>
       <div class="program">Rhapsody in Blue — met Mechels Harmonie Orkest</div>
@@ -1062,6 +1075,12 @@
       <div class="venue">Muziekgebouw Eindhoven</div>
       <a href="#contact" class="cta mono" data-i18n="agenda_tickets">Tickets</a>
     </div>
+    <div class="agenda-row agenda-breda reveal" data-date="2026-11-20" data-type="breda">
+      <div class="date"></div>
+      <div class="program">FIEN: Echoes of War (12:00)</div>
+      <div class="venue">Waalse Kerk Breda</div>
+      <a href="#contact" class="cta mono" data-i18n="agenda_tickets">Tickets</a>
+    </div>
     <div class="agenda-row reveal" data-date="2026-11-25">
       <div class="date"></div>
       <div class="program">Recital</div>
@@ -1072,6 +1091,12 @@
       <div class="date"></div>
       <div class="program">Trio — met Luc Tooten &amp; Karen Su</div>
       <div class="venue">Zoersel</div>
+      <a href="#contact" class="cta mono" data-i18n="agenda_tickets">Tickets</a>
+    </div>
+    <div class="agenda-row agenda-breda reveal" data-date="2027-02-26" data-type="breda">
+      <div class="date"></div>
+      <div class="program">Concert Monique Heijdens</div>
+      <div class="venue">Waalse Kerk Breda</div>
       <a href="#contact" class="cta mono" data-i18n="agenda_tickets">Tickets</a>
     </div>
   </div>
@@ -2265,7 +2290,9 @@
         '@type': 'Place',
         name: row.querySelector('.venue')?.textContent.trim() || ''
       },
-      performer: { '@type': 'Person', name: 'Ruben Plazier' },
+      ...(row.dataset.type === 'breda'
+        ? { organizer: { '@type': 'Person', name: 'Ruben Plazier' } }
+        : { performer: { '@type': 'Person', name: 'Ruben Plazier' } }),
       url: 'https://rubenplazier.com/#agenda'
     }));
     script.textContent = JSON.stringify(events);
